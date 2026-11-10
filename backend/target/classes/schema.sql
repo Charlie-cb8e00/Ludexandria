@@ -1,0 +1,43 @@
+CREATE TABLE IF NOT EXISTS usuario (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  email VARCHAR(180) NOT NULL UNIQUE,
+  password_hash VARCHAR(255) NOT NULL,
+  nombre VARCHAR(120) NOT NULL,
+  rol VARCHAR(30) NOT NULL DEFAULT 'USER',
+  fecha_alta TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS juego (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  igdb_id BIGINT UNIQUE,
+  nombre VARCHAR(255) NOT NULL,
+  resumen TEXT,
+  fecha_salida DATE NULL,
+  nota_igdb DOUBLE NULL,
+  duracion_minutos INT NULL,
+  url_portada VARCHAR(500) NULL,
+  ultima_actualizacion TIMESTAMP NULL
+);
+
+CREATE TABLE IF NOT EXISTS biblioteca (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  id_usuario BIGINT NOT NULL,
+  id_juego BIGINT NOT NULL,
+  estado VARCHAR(30) NOT NULL DEFAULT 'pendiente',
+  nota_personal DOUBLE NULL,
+  horas_jugadas DOUBLE NULL DEFAULT 0,
+  fecha_anadido TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_bib_usuario FOREIGN KEY (id_usuario) REFERENCES usuario(id) ON DELETE CASCADE,
+  CONSTRAINT fk_bib_juego FOREIGN KEY (id_juego) REFERENCES juego(id) ON DELETE CASCADE,
+  CONSTRAINT uq_usuario_juego UNIQUE (id_usuario, id_juego)
+);
+
+CREATE TABLE IF NOT EXISTS recomendacion_ia (
+  id BIGINT PRIMARY KEY AUTO_INCREMENT,
+  id_usuario BIGINT NOT NULL,
+  peticion TEXT,
+  respuesta TEXT,
+  tokens INT NULL,
+  fecha TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  CONSTRAINT fk_rec_usuario FOREIGN KEY (id_usuario) REFERENCES usuario(id) ON DELETE CASCADE
+);
