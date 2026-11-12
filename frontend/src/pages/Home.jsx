@@ -3,11 +3,15 @@ import { Link } from "react-router-dom";
 export default function Home() {
     return (
         <div>
-            <h1>Ludexandria</h1>
-            <p style={{ color: "#555", maxWidth: 560 }}>
-                Tu biblioteca personal de videojuegos. Organiza el backlog, guarda estado,
-                nota y horas, e elige a qué jugar con ayuda de la IA.
-            </p>
+            <section className="portada">
+                <div className="portada__contenido">
+                    <h1>Ludexandria</h1>
+                    <p style={{ color: "#555", maxWidth: 560 }}>
+                        Tu biblioteca personal de videojuegos. Organiza el backlog, guarda estado,
+                        nota y horas, e elige a qué jugar con ayuda de la IA.
+                    </p>
+                </div>
+            </section>
 
             <section style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 16, marginTop: 24 }}>
                 <Link to="/biblioteca" style={cardStyle}>
