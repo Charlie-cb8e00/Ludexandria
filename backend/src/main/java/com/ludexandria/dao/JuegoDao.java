@@ -1,5 +1,4 @@
 package com.ludexandria.dao;
-package com.ludexandria.dao;
 
 import com.ludexandria.model.Juego;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -66,5 +65,19 @@ public class JuegoDao {
         Long id = jdbc.queryForObject("SELECT LAST_INSERT_ID()", Long.class);
         j.setId(id);
         return j;
+    }
+
+    public void update(Juego j) {
+        jdbc.update(
+            """
+            UPDATE juego SET nombre=?, resumen=?, fecha_salida=?, nota_igdb=?,
+              duracion_minutos=?, url_portada=?, ultima_actualizacion=?
+            WHERE id=?
+            """,
+            j.getNombre(), j.getResumen(), j.getFechaSalida(), j.getNotaIgdb(),
+            j.getDuracionMinutos(), j.getUrlPortada(),
+            j.getUltimaActualizacion() == null ? null : Timestamp.from(j.getUltimaActualizacion()),
+            j.getId()
+        );
     }
 }

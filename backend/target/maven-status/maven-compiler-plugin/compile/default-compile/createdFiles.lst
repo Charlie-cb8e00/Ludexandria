@@ -1,0 +1,4 @@
+com\ludexandria\controller\ImportacionController.class
+com\ludexandria\service\IgdbService.class
+com\ludexandria\service\ImportacionService.class
+com\ludexandria\controller\AdminController.class
