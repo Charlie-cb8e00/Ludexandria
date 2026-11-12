@@ -14,10 +14,15 @@
  
 :root {
   /* Tema oscuro (por defecto) */
-  --bg: #18110d;
+  --bg: #00030f;
   --page-texture:
-    radial-gradient(ellipse at 50% 35%, transparent 35%, rgba(8, 4, 2, 0.28) 100%),
-    linear-gradient(135deg, rgba(112, 67, 35, 0.08), transparent 60%);
+    radial-gradient(
+      ellipse at 50% 42%,
+      #00091f 0%,
+      #000719 38%,
+      #000515 76%,
+      #00030f 100%
+    );
   --surface: #2b1c13;
   --surface-2: #3a271b;
   --surface-texture:
@@ -74,10 +79,11 @@
 /* Tema claro: sigue al sistema salvo que se fuerce con data-theme="dark" */
 @media (prefers-color-scheme: light) {
   :root:not([data-theme="dark"]) {
-    --bg: #e7d8b5;
+    --bg: #dfc58b;
     --page-texture:
-      radial-gradient(ellipse at 50% 35%, transparent 45%, rgba(112, 72, 29, 0.10) 100%),
-      linear-gradient(135deg, rgba(255, 255, 255, 0.2), transparent 65%);
+      radial-gradient(ellipse at 22% 0%, rgba(255, 244, 198, 0.48), transparent 50%),
+      radial-gradient(ellipse at 83% 30%, rgba(170, 126, 56, 0.13), transparent 60%),
+      linear-gradient(135deg, rgba(255, 255, 255, 0.18), transparent 65%);
     --surface: #f4e8c6;
     --surface-2: #e8d6a8;
     --surface-texture:
@@ -109,10 +115,11 @@
  
 /* Tema claro forzado (para un futuro botón de cambio de tema) */
 :root[data-theme="light"] {
-  --bg: #e7d8b5;
+  --bg: #dfc58b;
   --page-texture:
-    radial-gradient(ellipse at 50% 35%, transparent 45%, rgba(112, 72, 29, 0.10) 100%),
-    linear-gradient(135deg, rgba(255, 255, 255, 0.2), transparent 65%);
+    radial-gradient(ellipse at 22% 0%, rgba(255, 244, 198, 0.48), transparent 50%),
+    radial-gradient(ellipse at 83% 30%, rgba(170, 126, 56, 0.13), transparent 60%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.18), transparent 65%);
   --surface: #f4e8c6;
   --surface-2: #e8d6a8;
   --surface-texture:
