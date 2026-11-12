@@ -14,17 +14,23 @@
  
 :root {
   /* Tema oscuro (por defecto) */
-  --bg: #0c1426;
-  --surface: #131f38;
-  --surface-2: #1b2b4a;
-  --line: #2b3f66;
-  --text: #ece3cc;
-  --text-muted: #a3adc2;
- 
-  --accent: #e3b04b;
-  --accent-strong: #f0c566;
-  --on-accent: #0c1426;
-  --focus: #f0c566;
+  --bg: #18110d;
+  --page-texture:
+    radial-gradient(ellipse at 50% 35%, transparent 35%, rgba(8, 4, 2, 0.28) 100%),
+    linear-gradient(135deg, rgba(112, 67, 35, 0.08), transparent 60%);
+  --surface: #2b1c13;
+  --surface-2: #3a271b;
+  --surface-texture:
+    radial-gradient(ellipse at center, transparent 38%, rgba(12, 5, 2, 0.34) 100%),
+    linear-gradient(135deg, rgba(218, 160, 91, 0.08), rgba(28, 12, 5, 0.12));
+  --line: #6a482f;
+  --text: #f0dfc2;
+  --text-muted: #c1a987;
+
+  --accent: #d6a354;
+  --accent-strong: #e8ba70;
+  --on-accent: #25170d;
+  --focus: #efc06e;
  
   --ok: #8fcf6e;
   --danger: #f08a82;
@@ -37,7 +43,7 @@
   --st-completado: #8fcf6e;
   --st-abandonado: #b58b95;
  
-  --shadow: 0 10px 28px -12px rgba(0, 0, 0, 0.6);
+  --shadow: 0 12px 28px -12px rgba(0, 0, 0, 0.62);
  
   /* Tipografía */
   --font-title: "Alegreya", Georgia, "Times New Roman", serif;
@@ -68,17 +74,23 @@
 /* Tema claro: sigue al sistema salvo que se fuerce con data-theme="dark" */
 @media (prefers-color-scheme: light) {
   :root:not([data-theme="dark"]) {
-    --bg: #eef1f6;
-    --surface: #ffffff;
-    --surface-2: #e4e9f2;
-    --line: #c5cfe0;
-    --text: #14203a;
-    --text-muted: #4d5b78;
+    --bg: #e7d8b5;
+    --page-texture:
+      radial-gradient(ellipse at 50% 35%, transparent 45%, rgba(112, 72, 29, 0.10) 100%),
+      linear-gradient(135deg, rgba(255, 255, 255, 0.2), transparent 65%);
+    --surface: #f4e8c6;
+    --surface-2: #e8d6a8;
+    --surface-texture:
+      radial-gradient(ellipse at center, transparent 48%, rgba(112, 72, 29, 0.11) 100%),
+      linear-gradient(135deg, rgba(255, 255, 255, 0.35), rgba(180, 137, 68, 0.10));
+    --line: #b79b67;
+    --text: #3b2f24;
+    --text-muted: #6b5a46;
  
     --accent: #8a5c06;
     --accent-strong: #6f4803;
-    --on-accent: #ffffff;
-    --focus: #1d2d4d;
+    --on-accent: #fff5dc;
+    --focus: #70420d;
  
     --ok: #2f7a1c;
     --danger: #b3261e;
@@ -90,24 +102,30 @@
     --st-completado: #3f8a24;
     --st-abandonado: #8a5a66;
  
-    --shadow: 0 10px 24px -14px rgba(20, 32, 58, 0.35);
+    --shadow: 0 10px 24px -14px rgba(83, 54, 22, 0.3);
     color-scheme: light;
   }
 }
  
 /* Tema claro forzado (para un futuro botón de cambio de tema) */
 :root[data-theme="light"] {
-  --bg: #eef1f6;
-  --surface: #ffffff;
-  --surface-2: #e4e9f2;
-  --line: #c5cfe0;
-  --text: #14203a;
-  --text-muted: #4d5b78;
+  --bg: #e7d8b5;
+  --page-texture:
+    radial-gradient(ellipse at 50% 35%, transparent 45%, rgba(112, 72, 29, 0.10) 100%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.2), transparent 65%);
+  --surface: #f4e8c6;
+  --surface-2: #e8d6a8;
+  --surface-texture:
+    radial-gradient(ellipse at center, transparent 48%, rgba(112, 72, 29, 0.11) 100%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.35), rgba(180, 137, 68, 0.10));
+  --line: #b79b67;
+  --text: #3b2f24;
+  --text-muted: #6b5a46;
  
   --accent: #8a5c06;
   --accent-strong: #6f4803;
-  --on-accent: #ffffff;
-  --focus: #1d2d4d;
+  --on-accent: #fff5dc;
+  --focus: #70420d;
  
   --ok: #2f7a1c;
   --danger: #b3261e;
@@ -119,7 +137,7 @@
   --st-completado: #3f8a24;
   --st-abandonado: #8a5a66;
  
-  --shadow: 0 10px 24px -14px rgba(20, 32, 58, 0.35);
+  --shadow: 0 10px 24px -14px rgba(83, 54, 22, 0.3);
   color-scheme: light;
 }
  
@@ -139,7 +157,9 @@ html {
  
 body {
   margin: 0;
-  background: var(--bg);
+  background-color: var(--bg);
+  background-image: var(--page-texture);
+  background-attachment: fixed;
   color: var(--text);
   font-family: var(--font-body);
   font-size: var(--fs-base);
@@ -253,6 +273,7 @@ textarea {
   font-weight: 400;
   color: var(--text);
   background: var(--surface);
+  background-image: var(--surface-texture);
   border: 1.5px solid var(--line);
   border-radius: var(--r-control);
   min-height: 44px;
@@ -416,6 +437,36 @@ button:disabled,
   border-radius: var(--r-control) var(--r-control) 0 0;
 }
  
+.navbar__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-left: auto;
+}
+.navbar__actions .theme-selector {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  min-height: 44px;
+  padding: 4px;
+  background: #f4e8c6;
+  border: 1.5px solid #b79b67;
+  border-radius: 50%;
+}
+.navbar__actions .theme-selector:hover {
+  background: #f4e8c6;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent);
+}
+.theme-selector__icon {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
 /* --------------------------------------------------------------------------
    5. Contenido de página
    -------------------------------------------------------------------------- */
@@ -434,6 +485,7 @@ button:disabled,
  
 .panel {
   background: var(--surface);
+  background-image: var(--surface-texture);
   border: 1px solid var(--line);
   border-radius: var(--r-card);
   padding: var(--space-5);
@@ -445,6 +497,23 @@ button:disabled,
   margin: var(--space-6) auto;
 }
  
+/* Portada de inicio */
+.portada {
+  padding: clamp(1.5rem, 5vw, 3rem);
+  background: var(--surface);
+  background-image: var(--surface-texture);
+  border: 1px solid var(--line);
+  border-radius: var(--r-modal);
+  box-shadow: var(--shadow);
+}
+.portada h1 {
+  margin-bottom: var(--space-3);
+}
+.portada__descripcion {
+  max-width: 560px;
+  color: var(--text-muted);
+}
+
 /* Accesos de la portada (Home) */
 .tiles {
   display: grid;
@@ -459,6 +528,7 @@ button:disabled,
   gap: var(--space-2);
   padding: var(--space-4) var(--space-5);
   background: var(--surface);
+  background-image: var(--surface-texture);
   border: 1px solid var(--line);
   border-radius: var(--r-card);
   color: var(--text);
@@ -517,6 +587,7 @@ button:disabled,
   display: flex;
   flex-direction: column;
   background: var(--surface);
+  background-image: var(--surface-texture);
   border: 1px solid var(--line);
   border-radius: var(--r-card);
   overflow: hidden;
