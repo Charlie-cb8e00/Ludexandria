@@ -47,4 +47,8 @@ public class UsuarioDao {
         u.setId(id);
         return u;
     }
+
+    public void updateRol(Long id, String rol) {
+        jdbc.update("UPDATE usuario SET rol = ? WHERE id = ?", rol, id);
+    }
 }

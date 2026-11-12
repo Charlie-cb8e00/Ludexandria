@@ -35,6 +35,8 @@ public class BibliotecaDao {
         j.setUrlPortada(rs.getString("j_portada"));
         double n = rs.getDouble("j_nota");
         if (!rs.wasNull()) j.setNotaIgdb(n);
+        int dur = rs.getInt("j_duracion");
+        if (!rs.wasNull()) j.setDuracionMinutos(dur);
         b.setJuego(j);
         return b;
     };
@@ -48,7 +50,7 @@ public class BibliotecaDao {
             return jdbc.query(
                 """
                 SELECT b.*, j.id j_id, j.nombre j_nombre, j.resumen j_resumen,
-                       j.url_portada j_portada, j.nota_igdb j_nota
+                       j.url_portada j_portada, j.nota_igdb j_nota, j.duracion_minutos j_duracion
                 FROM biblioteca b JOIN juego j ON j.id = b.id_juego
                 WHERE b.id_usuario = ? AND b.estado = ?
                 ORDER BY b.fecha_anadido DESC
@@ -59,7 +61,7 @@ public class BibliotecaDao {
         return jdbc.query(
             """
             SELECT b.*, j.id j_id, j.nombre j_nombre, j.resumen j_resumen,
-                   j.url_portada j_portada, j.nota_igdb j_nota
+                   j.url_portada j_portada, j.nota_igdb j_nota, j.duracion_minutos j_duracion
             FROM biblioteca b JOIN juego j ON j.id = b.id_juego
             WHERE b.id_usuario = ?
             ORDER BY b.fecha_anadido DESC
@@ -72,7 +74,7 @@ public class BibliotecaDao {
         var list = jdbc.query(
             """
             SELECT b.*, j.id j_id, j.nombre j_nombre, j.resumen j_resumen,
-                   j.url_portada j_portada, j.nota_igdb j_nota
+                   j.url_portada j_portada, j.nota_igdb j_nota, j.duracion_minutos j_duracion
             FROM biblioteca b JOIN juego j ON j.id = b.id_juego
             WHERE b.id = ? AND b.id_usuario = ?
             """,
