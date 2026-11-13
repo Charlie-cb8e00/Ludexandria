@@ -480,12 +480,14 @@ button:disabled,
 }
 .theme-selector__icon {
   display: block;
-  width: 24px;
-  height: 24px;
-  color: var(--text);
+  width: 26px;
+  height: 26px;
+  background-color: var(--text);
+  mask: var(--icon-mask) center / contain no-repeat;
+  -webkit-mask: var(--icon-mask) center / contain no-repeat;
 }
 .navbar__actions .theme-selector:hover .theme-selector__icon {
-  color: var(--accent);
+  background-color: var(--accent);
 }
 .navbar__profile {
   display: inline-flex;
