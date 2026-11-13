@@ -96,10 +96,7 @@ public class ImportacionService {
                 }
 
                 try {
-                    Juego encontrado = juegoDao.search(nombre, 1, 0).stream()
-                            .filter(j -> j.getNombre().equalsIgnoreCase(nombre))
-                            .findFirst()
-                            .orElse(null);
+                    Juego encontrado = juegoDao.findByNombreExacto(nombre).orElse(null);
 
                     final Juego juego;
                     if (encontrado == null) {

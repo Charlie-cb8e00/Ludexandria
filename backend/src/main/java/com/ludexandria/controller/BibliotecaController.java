@@ -8,6 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/biblioteca")
@@ -27,6 +28,11 @@ public class BibliotecaController {
             Authentication auth,
             @RequestParam(required = false) String estado) {
         return bibliotecaService.listar(uid(auth), estado);
+    }
+
+    @PostMapping("/populares")
+    public Map<String, Integer> anadirPopulares(Authentication auth) {
+        return bibliotecaService.anadirPopulares(uid(auth));
     }
 
     @PostMapping

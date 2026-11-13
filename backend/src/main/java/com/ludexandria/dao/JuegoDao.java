@@ -50,6 +50,11 @@ public class JuegoDao {
         return list.stream().findFirst();
     }
 
+    public Optional<Juego> findByNombreExacto(String nombre) {
+        var list = jdbc.query("SELECT * FROM juego WHERE LOWER(nombre) = LOWER(?) ORDER BY id LIMIT 1", mapper, nombre);
+        return list.stream().findFirst();
+    }
+
     public Optional<Juego> findByIgdbId(Long igdbId) {
         var list = jdbc.query("SELECT * FROM juego WHERE igdb_id = ?", mapper, igdbId);
         return list.stream().findFirst();

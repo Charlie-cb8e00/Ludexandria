@@ -10,7 +10,7 @@ Cumple el MVP del documento de planificación (Grupo G5):
 - Importación de biblioteca desde CSV
 - Asistente de recomendaciones (basado en la biblioteca real; preparado para IA)
 - Panel de administración básico (roles, stats, consumo IA)
-- Esquema normalizado (género, tema, plataforma, compañía y relaciones N:M)
+- Esquema reducido a usuarios, juegos, biblioteca y uso del asistente
 
 ## Requisitos
 
@@ -37,7 +37,9 @@ IA_API_KEY=...
 IA_BASE_URL=https://api.openai.com/v1
 ```
 
-Al arrancar, `schema.sql` crea las tablas si no existen.
+Al arrancar, `schema.sql` crea las tablas principales si no existen. Las instalaciones
+anteriores conservan sus tablas de catálogos no utilizadas; no se eliminan ni se borran
+datos automáticamente.
 
 ## Arranque
 
@@ -60,6 +62,7 @@ mvn spring-boot:run
 | POST | `/api/juegos/demo` | Sí | Crear juego de prueba |
 | GET | `/api/biblioteca?estado=` | Sí | Mi biblioteca |
 | POST | `/api/biblioteca` | Sí | Añadir `{ idJuego, estado?, notaPersonal?, horasJugadas? }` |
+| POST | `/api/biblioteca/populares` | Sí | Añadir hasta 10 juegos populares con estado pendiente y 0 horas |
 | PUT | `/api/biblioteca/{id}` | Sí | Actualizar estado/nota/horas |
 | DELETE | `/api/biblioteca/{id}` | Sí | Quitar de la biblioteca |
 | POST | `/api/importaciones` | Sí | Multipart `file` (CSV) |
@@ -78,6 +81,9 @@ Celeste,Switch,completado,10,8
 ```
 
 Estados válidos: `pendiente`, `jugando`, `completado`, `abandonado`.
+
+La pantalla de biblioteca permite importar el CSV o añadir una selección de juegos
+populares. La carga de juegos populares es idempotente: no duplica entradas existentes.
 
 ## Estructura de capas
 
