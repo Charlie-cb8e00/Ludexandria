@@ -8,6 +8,8 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -83,6 +85,19 @@ public class BibliotecaDao {
         return list.stream().findFirst();
     }
 
+    public Optional<BibliotecaItem> findByUsuarioAndJuego(Long idUsuario, Long idJuego) {
+        var list = jdbc.query(
+            """
+            SELECT b.*, j.id j_id, j.nombre j_nombre, j.resumen j_resumen,
+                   j.url_portada j_portada, j.nota_igdb j_nota, j.duracion_minutos j_duracion
+            FROM biblioteca b JOIN juego j ON j.id = b.id_juego
+            WHERE b.id_usuario = ? AND b.id_juego = ?
+            """,
+            mapper, idUsuario, idJuego
+        );
+        return list.stream().findFirst();
+    }
+
     public BibliotecaItem insert(BibliotecaItem b) {
         jdbc.update(
             "INSERT INTO biblioteca (id_usuario, id_juego, estado, nota_personal, horas_jugadas) VALUES (?,?,?,?,?)",
@@ -91,6 +106,22 @@ public class BibliotecaDao {
         Long id = jdbc.queryForObject("SELECT LAST_INSERT_ID()", Long.class);
         b.setId(id);
         return b;
+    }
+
+    public void insertAll(List<BibliotecaItem> items) {
+        if (items.isEmpty()) return;
+        String values = String.join(",", Collections.nCopies(items.size(), "(?,?,?,?,?)"));
+        String sql = "INSERT INTO biblioteca (id_usuario, id_juego, estado, nota_personal, "
+                + "horas_jugadas) VALUES " + values;
+        List<Object> parameters = new ArrayList<>(items.size() * 5);
+        for (BibliotecaItem item : items) {
+            parameters.add(item.getIdUsuario());
+            parameters.add(item.getIdJuego());
+            parameters.add(item.getEstado());
+            parameters.add(item.getNotaPersonal());
+            parameters.add(item.getHorasJugadas());
+        }
+        jdbc.update(sql, parameters.toArray());
     }
 
     public void update(BibliotecaItem b) {

@@ -1,0 +1,255 @@
+/* Sobre nosotros · muro de piedra (oro y turquesa) sobre la biblioteca con antorcha.
+   Los selectores llevan dos clases para ganar a los estilos globales de index.css. */
+.about {
+  --ab-ink: #f1e5cb;
+  --ab-muted: #bba98a;
+  --ab-acc: #e3a93c;
+  --ab-acc2: #33e3c9;
+  --ab-line: #5a4528;
+  --ab-paper: #241b11ea;
+  --ab-fh: "Cinzel", serif;
+  --ab-fb: "Cormorant Garamond", serif;
+  padding: 44px 16px 60px;
+  color: var(--ab-ink);
+  font-family: var(--ab-fb);
+}
+
+.about .about__doc {
+  position: relative;
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 48px 38px 36px;
+  background: var(--ab-paper);
+  border: 1px solid var(--ab-line);
+  box-shadow: 0 0 0 6px #120d08, 0 0 0 7px var(--ab-line), 0 24px 60px #000c;
+}
+.about .about__doc::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 12px;
+  background: conic-gradient(from 135deg at 50% 0, var(--ab-acc) 90deg, transparent 0) 0 0 / 24px 12px;
+}
+
+.about .about__hero {
+  text-align: center;
+  padding-bottom: 26px;
+  margin-bottom: 28px;
+  border-bottom: 1px solid var(--ab-line);
+}
+.about .about__eyebrow {
+  margin: 0;
+  max-width: none;
+  font: 600 0.8rem var(--ab-fh);
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: var(--ab-acc2);
+}
+.about .about__title {
+  font: 700 clamp(2.4rem, 8vw, 3.8rem) / 1 var(--ab-fh);
+  margin: 8px 0 12px;
+  letter-spacing: 0.06em;
+  color: var(--ab-acc);
+  text-shadow: 0 2px 0 #000, 0 -1px 0 #fff3;
+}
+.about .about__lead {
+  font-size: 1.35rem;
+  color: var(--ab-muted);
+  max-width: 44ch;
+  margin: 0 auto;
+}
+
+.about .about__section { margin: 0 0 32px; }
+.about .about__heading {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 12px;
+  font: 700 1.2rem var(--ab-fh);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ab-acc);
+}
+/* Un jeroglífico distinto por sección (viene de data-icon) */
+.about .about__heading::before {
+  content: attr(data-icon);
+  font: 400 1.9rem / 1 "Noto Sans Egyptian Hieroglyphs", serif;
+  letter-spacing: 0;
+  color: var(--ab-acc2);
+  text-shadow: 0 0 10px #33e3c966;
+}
+.about .about__text {
+  max-width: none;
+  margin: 0 0 12px;
+  font-size: 1.18rem;
+  line-height: 1.6;
+}
+
+/* Pasos */
+.about .about__steps {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  counter-reset: ab-step;
+}
+.about .about__step {
+  counter-increment: ab-step;
+  padding: 16px;
+  border: 1px solid var(--ab-line);
+  border-left: 3px solid var(--ab-acc);
+  background: #0004;
+}
+.about .about__step::before {
+  content: counter(ab-step, upper-roman);
+  display: block;
+  font: 700 1.6rem var(--ab-fh);
+  color: var(--ab-acc);
+}
+.about .about__step-title {
+  display: block;
+  margin: 2px 0 4px;
+  font: 700 1rem var(--ab-fh);
+  letter-spacing: 0.04em;
+}
+.about .about__step-text {
+  display: block;
+  font-size: 1.08rem;
+  line-height: 1.4;
+  color: var(--ab-muted);
+}
+
+/* Plataformas */
+.about .about__platforms {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.about .about__platform {
+  padding: 7px 14px;
+  border: 1px solid #33e3c955;
+  color: var(--ab-acc2);
+  background: #0004;
+  font: 600 0.92rem var(--ab-fh);
+  letter-spacing: 0.05em;
+}
+
+/* Cifras */
+.about .about__stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin: 0 0 32px;
+  padding: 20px 0;
+  text-align: center;
+  border-block: 1px solid var(--ab-line);
+}
+.about .about__stat-value {
+  display: block;
+  font: 700 2.2rem / 1.1 var(--ab-fh);
+  color: var(--ab-acc2);
+}
+.about .about__stat-label {
+  font-size: 1.05rem;
+  color: var(--ab-muted);
+}
+
+/* Valóranos y contacto */
+.about .about__rate,
+.about .about__cta { text-align: center; }
+.about .about__rate {
+  margin: 0 0 32px;
+  padding: 26px 20px 28px;
+  border: 1px solid var(--ab-line);
+  background: #0004;
+}
+.about .about__rate .about__heading,
+.about .about__cta .about__heading { justify-content: center; }
+.about .about__cta { margin: 0; }
+
+.about .about__stars {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  margin: 6px 0 2px;
+}
+.about .about__star {
+  display: inline-block;
+  min-height: 0;
+  padding: 2px 3px;
+  font-size: 2.3rem;
+  line-height: 1;
+  color: var(--ab-acc2);
+  background: none;
+  border: 0;
+  border-radius: 4px;
+  transition: transform 0.15s;
+}
+.about .about__star:hover {
+  border: 0;
+  color: var(--ab-acc2);
+  transform: scale(1.15);
+}
+.about .about__thanks {
+  max-width: none;
+  min-height: 1.6em;
+  margin: 0 0 14px;
+  font-size: 1.08rem;
+  color: var(--ab-muted);
+}
+
+/* Botones (son enlaces) */
+.about .about__btn {
+  display: inline-block;
+  min-height: 0;
+  margin: 6px 3px 0;
+  padding: 13px 30px;
+  font: 700 1rem var(--ab-fh);
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  color: #2a1a04;
+  background: var(--ab-acc);
+  border: 0;
+  border-radius: 2px;
+  box-shadow: 0 0 22px #e3a93c55;
+}
+.about .about__btn:hover {
+  color: #2a1a04;
+  filter: brightness(1.1);
+}
+.about .about__btn--ghost,
+.about .about__btn--ghost:hover {
+  color: var(--ab-ink);
+  background: transparent;
+  border: 2px solid var(--ab-acc);
+  box-shadow: none;
+  padding: 11px 26px;
+}
+.about .about__btn:focus-visible,
+.about .about__star:focus-visible {
+  outline: 2px solid var(--ab-acc2);
+  outline-offset: 3px;
+}
+
+/* Móvil y pantallas pequeñas */
+@media (max-width: 900px) {
+  .about { padding: 32px 12px 44px; }
+}
+@media (max-width: 560px) {
+  .about .about__doc { padding: 42px 20px 28px; }
+  .about .about__stats { grid-template-columns: 1fr; }
+}
+@media (max-height: 500px) and (orientation: landscape) {
+  .about { padding: 24px 12px 32px; }
+  .about .about__doc { padding: 36px 24px 22px; }
+  .about .about__text { font-size: 1.1rem; }
+  .about .about__stats { padding: 14px 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .about .about__star { transition: none; }
+}

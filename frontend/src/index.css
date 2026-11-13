@@ -693,6 +693,19 @@ button:disabled,
   font-weight: 600;
 }
 
+.game-card__library-meta {
+  display: grid;
+  gap: var(--space-1);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--line);
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
+}
+
+.game-card__library-meta strong {
+  color: var(--text);
+}
+
 .game-detail {
   display: grid;
   grid-template-columns: minmax(220px, 340px) minmax(0, 1fr);
@@ -761,6 +774,41 @@ button:disabled,
 }
 
 .game-detail__facts dd {
+  margin: var(--space-1) 0 0;
+  font-weight: 700;
+}
+
+.game-detail__library {
+  margin-top: var(--space-5);
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--line);
+}
+
+.game-detail__library h2 {
+  margin: 0 0 var(--space-3);
+  font-size: var(--fs-lg);
+}
+
+.game-detail__library dl {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: var(--space-3);
+  margin: 0;
+}
+
+.game-detail__library dl > div {
+  padding: var(--space-3);
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--r-control);
+}
+
+.game-detail__library dt {
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
+}
+
+.game-detail__library dd {
   margin: var(--space-1) 0 0;
   font-weight: 700;
 }

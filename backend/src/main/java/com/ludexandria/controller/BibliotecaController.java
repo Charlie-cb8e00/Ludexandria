@@ -4,6 +4,7 @@ import com.ludexandria.dto.BibliotecaRequest;
 import com.ludexandria.model.BibliotecaItem;
 import com.ludexandria.service.BibliotecaService;
 import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,6 +29,13 @@ public class BibliotecaController {
             Authentication auth,
             @RequestParam(required = false) String estado) {
         return bibliotecaService.listar(uid(auth), estado);
+    }
+
+    @GetMapping("/juego/{idJuego}")
+    public ResponseEntity<BibliotecaItem> porJuego(Authentication auth, @PathVariable Long idJuego) {
+        return bibliotecaService.buscarPorJuego(uid(auth), idJuego)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.<BibliotecaItem>noContent().build());
     }
 
     @PostMapping("/populares")

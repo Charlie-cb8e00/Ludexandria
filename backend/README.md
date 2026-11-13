@@ -63,8 +63,9 @@ mvn spring-boot:run
 | GET | `/api/juegos/{id}` | Sí | Ficha |
 | POST | `/api/juegos/demo` | Sí | Crear juego de prueba |
 | GET | `/api/biblioteca?estado=` | Sí | Mi biblioteca |
+| GET | `/api/biblioteca/juego/{idJuego}` | Sí | Estado y nota personal del juego (204 si no está en la biblioteca) |
 | POST | `/api/biblioteca` | Sí | Añadir `{ idJuego, estado?, notaPersonal?, horasJugadas? }` |
-| POST | `/api/biblioteca/populares` | Sí | Añadir hasta 10 juegos populares con estado pendiente y 0 horas |
+| POST | `/api/biblioteca/populares` | Sí | Añadir 50 títulos populares con estado pendiente y 0 horas |
 | PUT | `/api/biblioteca/{id}` | Sí | Actualizar estado/nota/horas |
 | DELETE | `/api/biblioteca/{id}` | Sí | Quitar de la biblioteca |
 | POST | `/api/importaciones` | Sí | Multipart `file` (CSV) |
@@ -84,8 +85,9 @@ Celeste,Switch,completado,10,8
 
 Estados válidos: `pendiente`, `jugando`, `completado`, `abandonado`.
 
-La pantalla de biblioteca permite importar el CSV o añadir una selección de juegos
-populares. La carga de juegos populares es idempotente: no duplica entradas existentes.
+La pantalla de biblioteca permite importar el CSV o añadir una selección de 50 juegos
+populares. La carga es idempotente, no duplica entradas existentes y rellena portadas
+de Steam para los títulos disponibles en su catálogo.
 
 La búsqueda consulta Steam bajo demanda y consulta IGDB cuando están configuradas
 `IGDB_CLIENT_ID` e `IGDB_CLIENT_SECRET`. `/api/juegos/buscar` también devuelve avisos
