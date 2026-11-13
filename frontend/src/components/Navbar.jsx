@@ -1,8 +1,10 @@
+import { useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import profileIcon from "../assets/profile-icon.png";
 import ThemeSelector from "./ThemeSelector";
 
 export default function Navbar() {
+    const [menuOpen, setMenuOpen] = useState(false);
     const navigate = useNavigate();
     const token = localStorage.getItem("token");
 
@@ -11,16 +13,36 @@ export default function Navbar() {
         navigate("/login");
     }
 
+    function closeMenu() {
+        setMenuOpen(false);
+    }
+
     return (
         <nav className="navbar">
             <Link to="/" className="navbar__brand">Ludexandria</Link>
-            {token && <div className="navbar__links">
-                <NavLink end to="/">Inicio</NavLink>
-                <NavLink to="/buscar">Buscar</NavLink>
-                <NavLink to="/biblioteca">Biblioteca</NavLink>
-                <NavLink to="/asistente">Asistente IA</NavLink>
-                <NavLink to="/importar">Importar CSV</NavLink>
-            </div>}
+            {token && (
+                <>
+                    <div className={`navbar__links${menuOpen ? " navbar__links--open" : ""}`} id="main-navigation">
+                        <NavLink end to="/" onClick={closeMenu}>Inicio</NavLink>
+                        <NavLink to="/buscar" onClick={closeMenu}>Buscar</NavLink>
+                        <NavLink to="/biblioteca" onClick={closeMenu}>Biblioteca</NavLink>
+                        <NavLink to="/asistente" onClick={closeMenu}>Asistente IA</NavLink>
+                        <NavLink to="/importar" onClick={closeMenu}>Importar CSV</NavLink>
+                    </div>
+                    <button
+                        type="button"
+                        className="navbar__menu-toggle"
+                        aria-label={menuOpen ? "Cerrar menú de navegación" : "Abrir menú de navegación"}
+                        aria-expanded={menuOpen}
+                        aria-controls="main-navigation"
+                        onClick={() => setMenuOpen((isOpen) => !isOpen)}
+                    >
+                        <span aria-hidden="true" />
+                        <span aria-hidden="true" />
+                        <span aria-hidden="true" />
+                    </button>
+                </>
+            )}
             <div className="navbar__actions">
                 <ThemeSelector />
                 {token && (

@@ -414,7 +414,7 @@ button:disabled,
   background: color-mix(in srgb, var(--bg) 88%, transparent);
   backdrop-filter: blur(8px);
   border-bottom: 1px solid var(--line);
-  overflow: hidden;
+  overflow: visible;
   white-space: nowrap;
 }
  
@@ -441,6 +441,10 @@ button:disabled,
   scrollbar-width: none;
 }
 .navbar__links::-webkit-scrollbar {
+  display: none;
+}
+
+.navbar__menu-toggle {
   display: none;
 }
  
@@ -1130,7 +1134,66 @@ tr:last-child td {
 /* --------------------------------------------------------------------------
    12. Ajustes responsive
    -------------------------------------------------------------------------- */
- 
+
+@media (max-width: 900px) {
+  .navbar__links {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0.75rem;
+    right: 0.75rem;
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-1);
+    padding: var(--space-2);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--r-control);
+    box-shadow: var(--shadow);
+    white-space: normal;
+    z-index: 21;
+  }
+  .navbar__links--open {
+    display: flex;
+  }
+  .navbar__links a {
+    width: 100%;
+    padding: var(--space-2) var(--space-3);
+    border-radius: var(--r-control);
+  }
+  .navbar__links a.active,
+  .navbar__links a[aria-current="page"] {
+    box-shadow: inset 3px 0 0 var(--accent);
+    border-radius: var(--r-control);
+  }
+  .navbar__menu-toggle {
+    display: flex;
+    flex: 0 0 40px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    width: 40px;
+    height: 40px;
+    min-height: 40px;
+    padding: 0;
+    background: var(--surface);
+    border: 1.5px solid var(--line);
+    border-radius: 50%;
+  }
+  .navbar__menu-toggle:hover {
+    background: var(--surface-2);
+    border-color: var(--accent);
+  }
+  .navbar__menu-toggle span {
+    display: block;
+    width: 16px;
+    height: 2px;
+    background: var(--text);
+    border-radius: 2px;
+  }
+}
+
 @media (max-width: 640px) {
   .navbar {
     gap: var(--space-2);
@@ -1138,13 +1201,6 @@ tr:last-child td {
   }
   .navbar .navbar__brand {
     font-size: var(--fs-lg);
-  }
-  .navbar__links {
-    flex-basis: 0;
-    gap: 0;
-  }
-  .navbar__links a {
-    padding-inline: var(--space-2);
   }
   .navbar__actions {
     gap: var(--space-1);
