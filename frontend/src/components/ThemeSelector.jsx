@@ -26,6 +26,8 @@ export default function ThemeSelector() {
         setTheme(nextTheme);
     }
 
+    const themeIcon = theme === "light" ? lightThemeIcon : darkThemeIcon;
+
     return (
         <button
             type="button"
@@ -35,10 +37,10 @@ export default function ThemeSelector() {
             aria-pressed={theme === "dark"}
             title={`Cambiar a modo ${theme === "light" ? "oscuro" : "claro"}`}
         >
-            <img
-                src={theme === "light" ? lightThemeIcon : darkThemeIcon}
-                alt=""
+            <span
                 className="theme-selector__icon"
+                aria-hidden="true"
+                style={{ "--icon-mask": `url("${themeIcon}")` }}
             />
         </button>
     );

@@ -458,20 +458,45 @@ button:disabled,
   height: 44px;
   min-height: 44px;
   padding: 4px;
-  background: #f4e8c6;
-  border: 1.5px solid #b79b67;
+  background: var(--surface);
+  border: 1.5px solid var(--line);
   border-radius: 50%;
 }
 .navbar__actions .theme-selector:hover {
-  background: #f4e8c6;
+  background: var(--surface-2);
   border-color: var(--accent);
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 25%, transparent);
 }
 .theme-selector__icon {
   display: block;
+  width: 26px;
+  height: 26px;
+  background-color: var(--text);
+  mask: var(--icon-mask) center / contain no-repeat;
+  -webkit-mask: var(--icon-mask) center / contain no-repeat;
+}
+.navbar__profile {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  margin-left: var(--space-2);
+  padding: 4px !important;
+  background: transparent !important;
+}
+.navbar__profile:hover {
+  color: var(--accent) !important;
+}
+.navbar__profile:hover .navbar__profile-icon {
+  background-color: var(--accent);
+}
+.navbar__profile-icon {
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  background-color: var(--text);
+  mask: var(--icon-mask) center / contain no-repeat;
+  -webkit-mask: var(--icon-mask) center / contain no-repeat;
 }
 
 /* --------------------------------------------------------------------------
