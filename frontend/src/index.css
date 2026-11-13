@@ -845,6 +845,20 @@ button:disabled,
   font-weight: 700;
 }
 
+.game-detail__library-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  align-items: end;
+  gap: var(--space-3);
+}
+
+.game-detail__library-form label {
+  display: grid;
+  gap: var(--space-1);
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
+}
+
 .game-detail__source {
   color: var(--text-muted);
   font-size: var(--fs-sm);

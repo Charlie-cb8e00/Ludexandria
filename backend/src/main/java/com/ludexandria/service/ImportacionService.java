@@ -150,6 +150,7 @@ public class ImportacionService {
         List<String> out = new ArrayList<>();
         StringBuilder cur = new StringBuilder();
         boolean inQuotes = false;
+        // Una coma separa columnas solo si está fuera de comillas.
         for (int i = 0; i < line.length(); i++) {
             char c = line.charAt(i);
             if (c == '"') {

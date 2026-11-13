@@ -2,17 +2,39 @@ package com.ludexandria.service;
 
 import com.ludexandria.dao.BibliotecaDao;
 import com.ludexandria.dao.JuegoDao;
+import com.ludexandria.dto.BibliotecaRequest;
 import com.ludexandria.model.BibliotecaItem;
 import com.ludexandria.model.Juego;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.*;
 
 class BibliotecaServiceTest {
+
+    @Test
+    void actualizarPermiteBorrarLaNotaPersonal() {
+        BibliotecaDao bibliotecaDao = mock(BibliotecaDao.class);
+        JuegoDao juegoDao = mock(JuegoDao.class);
+        BibliotecaService service = new BibliotecaService(bibliotecaDao, juegoDao);
+
+        BibliotecaItem item = new BibliotecaItem();
+        item.setId(3L);
+        item.setIdUsuario(7L);
+        item.setNotaPersonal(8.0);
+        when(bibliotecaDao.findByIdAndUsuario(3L, 7L)).thenReturn(Optional.of(item));
+        BibliotecaRequest request = new BibliotecaRequest();
+        request.setNotaPersonal(null);
+
+        BibliotecaItem resultado = service.actualizar(7L, 3L, request);
+
+        assertNull(resultado.getNotaPersonal());
+    }
 
     @Test
     void listarRellenaPortadaPopularAusente() {

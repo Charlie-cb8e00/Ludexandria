@@ -7,6 +7,7 @@ const WIKIPEDIA_SOURCES = [
     { domain: "es.wikipedia.org", suffix: "_(videojuego)" },
     { domain: "en.wikipedia.org", suffix: "_(video_game)" },
 ];
+const ESTADOS_BIBLIOTECA = ["pendiente", "jugando", "completado", "abandonado"];
 
 async function buscarResumenWikipedia(nombre, signal) {
     let lastError;
@@ -79,6 +80,8 @@ export default function GameDetail() {
     const [gameResult, setGameResult] = useState({ id: null, game: null, error: "" });
     const [wikiResult, setWikiResult] = useState({ id: null, article: null, error: "" });
     const [libraryResult, setLibraryResult] = useState({ id: null, item: null, error: "" });
+    const [libraryForm, setLibraryForm] = useState({ estado: "pendiente", notaPersonal: "", horasJugadas: 0 });
+    const [libraryAction, setLibraryAction] = useState({ saving: false, error: "", notice: "" });
     const [failedImage, setFailedImage] = useState("");
 
     useEffect(() => {
@@ -123,8 +126,19 @@ export default function GameDetail() {
     useEffect(() => {
         if (gameId == null) return undefined;
         const controller = new AbortController();
+        // Consulta solo la entrada de este juego, no toda la biblioteca del usuario.
         api.get(`/biblioteca/juego/${gameId}`, { signal: controller.signal })
-            .then(({ data }) => setLibraryResult({ id: gameId, item: data || null, error: "" }))
+            .then(({ data }) => {
+                const item = data || null;
+                setLibraryResult({ id: gameId, item, error: "" });
+                if (item) {
+                    setLibraryForm({
+                        estado: item.estado,
+                        notaPersonal: item.notaPersonal ?? "",
+                        horasJugadas: item.horasJugadas ?? 0,
+                    });
+                }
+            })
             .catch((error) => {
                 if (error.code !== "ERR_CANCELED") {
                     setLibraryResult({
@@ -157,6 +171,55 @@ export default function GameDetail() {
     const description = article?.extract || game.resumen;
     const imageSrc = coverCandidates.find((source) => source !== failedImage) || PLACEHOLDER_COVER;
     const imageFromWikipedia = Boolean(article?.image) && imageSrc === article.image;
+
+    async function anadirABiblioteca() {
+        setLibraryAction({ saving: true, error: "", notice: "" });
+        try {
+            const { data } = await api.post("/biblioteca", {
+                idJuego: game.id,
+                estado: "pendiente",
+                notaPersonal: null,
+                horasJugadas: 0,
+            });
+            const item = { ...data, juego: game };
+            setLibraryResult({ id: game.id, item, error: "" });
+            setLibraryForm({ estado: item.estado, notaPersonal: "", horasJugadas: 0 });
+            setLibraryAction({ saving: false, error: "", notice: "Añadido a tu biblioteca." });
+        } catch (error) {
+            setLibraryAction({
+                saving: false,
+                error: getApiErrorMessage(error, "No se pudo añadir el juego."),
+                notice: "",
+            });
+        }
+    }
+
+    async function guardarBiblioteca(event) {
+        event.preventDefault();
+        if (!libraryItem) return;
+        setLibraryAction({ saving: true, error: "", notice: "" });
+        try {
+            const { data } = await api.put(`/biblioteca/${libraryItem.id}`, {
+                idJuego: game.id,
+                estado: libraryForm.estado,
+                notaPersonal: libraryForm.notaPersonal === "" ? null : Number(libraryForm.notaPersonal),
+                horasJugadas: Number(libraryForm.horasJugadas),
+            });
+            setLibraryResult({ id: game.id, item: data, error: "" });
+            setLibraryForm({
+                estado: data.estado,
+                notaPersonal: data.notaPersonal ?? "",
+                horasJugadas: data.horasJugadas ?? 0,
+            });
+            setLibraryAction({ saving: false, error: "", notice: "Cambios guardados." });
+        } catch (error) {
+            setLibraryAction({
+                saving: false,
+                error: getApiErrorMessage(error, "No se pudieron guardar los cambios."),
+                notice: "",
+            });
+        }
+    }
 
     return (
         <section>
@@ -208,23 +271,56 @@ export default function GameDetail() {
                         {libraryLoading && <p role="status">Consultando tu biblioteca…</p>}
                         {libraryError && <p role="alert">{libraryError}</p>}
                         {!libraryLoading && !libraryError && libraryItem && (
-                            <dl>
-                                <div>
-                                    <dt>Estado</dt>
-                                    <dd>{libraryItem.estado}</dd>
-                                </div>
-                                <div>
-                                    <dt>Nota personal</dt>
-                                    <dd>{libraryItem.notaPersonal ?? "Sin nota"}</dd>
-                                </div>
-                                <div>
-                                    <dt>Horas jugadas</dt>
-                                    <dd>{libraryItem.horasJugadas ?? 0}</dd>
-                                </div>
-                            </dl>
+                            <>
+                                <form className="game-detail__library-form" onSubmit={guardarBiblioteca}>
+                                    <label>
+                                        Estado
+                                        <select
+                                            value={libraryForm.estado}
+                                            onChange={(event) => setLibraryForm({ ...libraryForm, estado: event.target.value })}
+                                        >
+                                            {ESTADOS_BIBLIOTECA.map((estado) => (
+                                                <option key={estado} value={estado}>{estado}</option>
+                                            ))}
+                                        </select>
+                                    </label>
+                                    <label>
+                                        Nota personal (0-10)
+                                        <input
+                                            type="number"
+                                            min="0"
+                                            max="10"
+                                            step="0.5"
+                                            value={libraryForm.notaPersonal}
+                                            onChange={(event) => setLibraryForm({ ...libraryForm, notaPersonal: event.target.value })}
+                                        />
+                                    </label>
+                                    <label>
+                                        Horas jugadas
+                                        <input
+                                            type="number"
+                                            min="0"
+                                            step="0.1"
+                                            value={libraryForm.horasJugadas}
+                                            onChange={(event) => setLibraryForm({ ...libraryForm, horasJugadas: event.target.value })}
+                                        />
+                                    </label>
+                                    <button type="submit" disabled={libraryAction.saving}>
+                                        {libraryAction.saving ? "Guardando…" : "Guardar cambios"}
+                                    </button>
+                                </form>
+                                {libraryAction.notice && <p role="status">{libraryAction.notice}</p>}
+                                {libraryAction.error && <p role="alert">{libraryAction.error}</p>}
+                            </>
                         )}
                         {!libraryLoading && !libraryError && !libraryItem && (
-                            <p>Este juego todavía no está en tu biblioteca.</p>
+                            <>
+                                <p>Este juego todavía no está en tu biblioteca.</p>
+                                <button type="button" onClick={anadirABiblioteca} disabled={libraryAction.saving}>
+                                    {libraryAction.saving ? "Añadiendo…" : "Añadir a mi biblioteca"}
+                                </button>
+                                {libraryAction.error && <p role="alert">{libraryAction.error}</p>}
+                            </>
                         )}
                     </section>
 

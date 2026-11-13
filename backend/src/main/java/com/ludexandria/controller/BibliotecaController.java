@@ -50,7 +50,7 @@ public class BibliotecaController {
 
     @PutMapping("/{id}")
     public BibliotecaItem actualizar(Authentication auth, @PathVariable Long id,
-                                     @RequestBody BibliotecaRequest req) {
+                                     @Valid @RequestBody BibliotecaRequest req) {
         return bibliotecaService.actualizar(uid(auth), id, req);
     }
 

@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 const COVER_PLACEHOLDER = "/cover-placeholder.svg";
 
 export default function GameCard({ juego, bibliotecaItem }) {
+    // Las portadas de IGDB se reducen en las tarjetas; la ficha conserva la imagen completa.
     const portadaTarjeta = juego.urlPortada?.replace("/t_cover_big/", "/t_cover_small/");
     const steamCoverPath = portadaTarjeta?.match(
         /^(https:\/\/[^/]+\/steam\/apps\/\d+)\/library_600x900\.jpg$/,

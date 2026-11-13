@@ -77,6 +77,7 @@ public class JuegoDao {
 
     public List<Juego> insertAll(List<Juego> juegos) {
         if (juegos.isEmpty()) return List.of();
+        // Inserta todos los títulos en una sola consulta para reducir viajes a MySQL.
         String values = String.join(",", Collections.nCopies(juegos.size(), "(?,?,?,?,?,?,?,?)"));
         String sql = "INSERT INTO juego (igdb_id, nombre, resumen, fecha_salida, nota_igdb, "
                 + "duracion_minutos, url_portada, ultima_actualizacion) VALUES " + values;

@@ -1,81 +1,102 @@
-# Ludexandria Backend (Spring Boot)
+# Backend: API y datos
 
-API REST para el frontend React. MySQL + JDBC (`JdbcTemplate`) + JWT + Swagger.
+El backend es el servidor de Ludexandria. Recibe peticiones del frontend, comprueba
+la sesión del usuario, aplica las reglas y lee o guarda información en MySQL.
 
-Cumple el MVP del documento de planificación (Grupo G5):
+## Iniciar en Windows
 
-- Registro / login con JWT
-- CRUD de biblioteca personal (estado, nota, horas)
-- Búsqueda bajo demanda en Steam e IGDB, con caché local de resultados
-- Importación de biblioteca desde CSV
-- Asistente de recomendaciones (basado en la biblioteca real; preparado para IA)
-- Panel de administración básico (roles, stats, consumo IA)
-- Esquema reducido a usuarios, juegos, biblioteca y uso del asistente
+Necesitas Java 17+, Maven y MySQL 8. Inicia MySQL y, desde una terminal en `backend`,
+ejecuta:
 
-## Requisitos
-
-- Java 17+
-- Maven 3.9+
-- MySQL 8
-
-## Configuración
-
-Edita `src/main/resources/application.properties` o usa variables de entorno:
-
-```properties
-spring.datasource.username=root
-spring.datasource.password=root
-app.jwt.secret=cambia-esta-clave-en-produccion
-app.cors.allowed-origins=http://localhost:5173
-
-# Opcional (IGDB / Twitch)
-IGDB_CLIENT_ID=...
-IGDB_CLIENT_SECRET=...
-
-# Opcional (IA generativa)
-IA_API_KEY=...
-IA_BASE_URL=https://api.openai.com/v1
-```
-
-Al arrancar, `schema.sql` crea las tablas principales si no existen. Las instalaciones
-anteriores conservan sus tablas de catálogos no utilizadas; no se eliminan ni se borran
-datos automáticamente.
-
-## Arranque
-
-```bash
-cd backend
+```powershell
 mvn spring-boot:run
 ```
 
-- API: http://localhost:8080  
-- Swagger: http://localhost:8080/swagger-ui.html  
+La API estará en <http://localhost:8080> y su documentación interactiva en
+<http://localhost:8080/swagger-ui.html>.
 
-## Endpoints principales
+Para arrancar el frontend, sigue [su guía](../frontend/README.md).
 
-| Método | Ruta | Auth | Descripción |
-|--------|------|------|-------------|
-| POST | `/api/auth/registro` | No | Alta `{ email, password, nombre? }` |
-| POST | `/api/auth/login` | No | Login → `{ token, email, nombre, rol }` |
-| GET | `/api/juegos?q=&page=&size=` | Sí | Buscar juegos |
-| GET | `/api/juegos/buscar?q=&page=&size=` | Sí | Buscar juegos e informar avisos de fuentes; respuesta `{ juegos, advertencias }` |
-| GET | `/api/juegos/fuentes` | Sí | Estado de disponibilidad de Steam e IGDB |
-| GET | `/api/juegos/{id}` | Sí | Ficha |
-| POST | `/api/juegos/demo` | Sí | Crear juego de prueba |
-| GET | `/api/biblioteca?estado=` | Sí | Mi biblioteca |
-| GET | `/api/biblioteca/juego/{idJuego}` | Sí | Estado y nota personal del juego (204 si no está en la biblioteca) |
-| POST | `/api/biblioteca` | Sí | Añadir `{ idJuego, estado?, notaPersonal?, horasJugadas? }` |
-| POST | `/api/biblioteca/populares` | Sí | Añadir 50 títulos populares con estado pendiente y 0 horas |
-| PUT | `/api/biblioteca/{id}` | Sí | Actualizar estado/nota/horas |
-| DELETE | `/api/biblioteca/{id}` | Sí | Quitar de la biblioteca |
-| POST | `/api/importaciones` | Sí | Multipart `file` (CSV) |
-| POST | `/api/recomendaciones` | Sí | `{ tiempo, plataforma?, animo? }` |
-| GET | `/api/admin/usuarios` | ADMIN | Listar usuarios |
-| PUT | `/api/admin/usuarios/{id}/rol` | ADMIN | Cambiar rol |
-| GET | `/api/admin/consumo-ia` | ADMIN | Tokens por usuario |
-| GET | `/api/admin/stats` | ADMIN | Contadores |
+## Configuración
 
-### Formato CSV de importación
+Los valores de desarrollo están en
+[`src/main/resources/application.properties`](./src/main/resources/application.properties).
+Por defecto, MySQL usa `localhost`, usuario `root` y contraseña `root`. La app crea la
+base `ludexandria` y las tablas que falten; no borra los datos existentes.
+Estas credenciales predeterminadas son solo para desarrollo local.
+
+En un servidor real, configura estos valores como variables de entorno:
+
+| Variable | Qué cambia |
+|---|---|
+| `DATABASE_URL` | Dirección de MySQL |
+| `DATABASE_USERNAME` y `DATABASE_PASSWORD` | Usuario y contraseña de MySQL |
+| `JWT_SECRET` | Clave privada para las sesiones; usa una propia de 32 caracteres o más |
+| `CORS_ALLOWED_ORIGINS` | Dirección del frontend permitida |
+| `SERVER_PORT` | Puerto de la API; por defecto, `8080` |
+| `JWT_EXPIRATION_MS` | Duración de sesión en milisegundos; por defecto, 24 horas |
+
+El valor JWT predeterminado solo sirve para desarrollo. No uses ese valor al publicar
+la app.
+
+## Fuentes de juegos
+
+- Steam se consulta al buscar y no necesita una clave.
+- IGDB es opcional; requiere `IGDB_CLIENT_ID` y `IGDB_CLIENT_SECRET` de una aplicación
+  de Twitch.
+- Si una fuente falla, la búsqueda intenta mostrar resultados locales y avisos.
+- No se descargan catálogos completos.
+
+Las recomendaciones actuales seleccionan juegos pendientes de la biblioteca; no usan
+una API de IA.
+
+## Cómo encontrar el código
+
+Piensa en una petición como una cadena:
+
+```text
+Controller → Service → DAO → MySQL
+```
+
+- `controller`: direcciones de la API y datos de entrada/salida.
+- `service`: decisiones y reglas de la aplicación.
+- `dao`: consultas SQL para guardar y leer datos.
+- `model`: objetos principales, como `Juego` y `BibliotecaItem`.
+- `dto`: formatos de petición y respuesta.
+- `security`: inicio de sesión con JWT y permisos.
+- `exception`: errores devueltos por la API.
+- `src/main/resources/schema.sql`: tablas de la base de datos.
+
+Ejemplo: la pantalla de búsqueda llama a `/api/juegos/buscar`; `JuegoController` recibe
+la petición, `JuegoService` combina las fuentes y `JuegoDao` guarda los resultados.
+
+## Direcciones más usadas
+
+Todas requieren iniciar sesión, salvo registro, acceso y documentación Swagger.
+
+| Método | Dirección | Uso |
+|---|---|---|
+| `POST` | `/api/auth/registro` | Crear cuenta |
+| `POST` | `/api/auth/login` | Iniciar sesión |
+| `GET` | `/api/juegos/buscar?q=Hades` | Buscar juegos |
+| `GET` | `/api/juegos/{id}` | Ver ficha de un juego |
+| `GET` | `/api/biblioteca` | Ver mi biblioteca |
+| `GET` | `/api/biblioteca/juego/{idJuego}` | Ver mi estado y nota de un juego |
+| `POST` | `/api/biblioteca` | Añadir un juego |
+| `POST` | `/api/biblioteca/populares` | Añadir la selección de 50 juegos |
+| `PUT` | `/api/biblioteca/{id}` | Cambiar estado, nota u horas |
+| `DELETE` | `/api/biblioteca/{id}` | Quitar un juego |
+| `POST` | `/api/importaciones` | Importar un archivo CSV |
+| `POST` | `/api/recomendaciones` | Elegir juegos pendientes según el tiempo |
+
+La consulta de biblioteca por juego responde `204` si el usuario aún no lo ha añadido.
+Las direcciones `/api/admin/...` requieren el rol de administrador.
+Las rutas de administración permiten listar usuarios, cambiar roles y consultar
+estadísticas de uso.
+
+## Formato del CSV
+
+La cabecera es opcional. El orden de las columnas es:
 
 ```csv
 nombre,plataforma,estado,nota,horas
@@ -83,33 +104,16 @@ Hades,PC,pendiente,9,12.5
 Celeste,Switch,completado,10,8
 ```
 
-Estados válidos: `pendiente`, `jugando`, `completado`, `abandonado`.
+Estados permitidos: `pendiente`, `jugando`, `completado` y `abandonado`.
 
-La pantalla de biblioteca permite importar el CSV o añadir una selección de 50 juegos
-populares. La carga es idempotente, no duplica entradas existentes y rellena portadas
-de Steam para los títulos disponibles en su catálogo.
+## Pruebas
 
-La búsqueda consulta Steam bajo demanda y consulta IGDB cuando están configuradas
-`IGDB_CLIENT_ID` e `IGDB_CLIENT_SECRET`. `/api/juegos/buscar` también devuelve avisos
-si una fuente externa no está disponible. Solo los resultados de la búsqueda se guardan
-en la caché local; no se descarga el catálogo completo de ningún proveedor.
-
-## Estructura de capas
-
-```
-controller/   → Auth, Juego, Biblioteca, Recomendacion, Importacion, Admin
-service/      → lógica de negocio + IgdbService
-dao/          → JDBC + JdbcTemplate (Usuario, Juego, Biblioteca)
-model/        → entidades
-dto/          → request/response
-security/     → JWT filter + JwtService
-exception/    → ApiException + @ControllerAdvice
-config/       → SecurityConfig (CORS, roles)
+```powershell
+mvn test
 ```
 
-## Notas del enunciado
+Si usas Java 27 y aparece un error de Byte Buddy, usa:
 
-- Claves IGDB e IA solo en backend (variables de entorno).
-- El frontend se ejecuta aparte; CORS ya está configurado.
-- DAO con PreparedStatement vía JdbcTemplate.
-- Pendiente de confirmar con el profesor: JDBC clásico puro vs JdbcTemplate (actualmente se usa JdbcTemplate).
+```powershell
+mvn test "-Dnet.bytebuddy.experimental=true"
+```
