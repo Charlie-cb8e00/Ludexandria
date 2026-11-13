@@ -1,0 +1,151 @@
+/* Login · tarjeta de piedra oscura con acento de llama.
+   Los selectores llevan dos clases para ganar a los estilos globales de index.css
+   (form, label, input, button, h1, p, a). */
+.login-card {
+  --lg-ink: #f3e3bd;
+  --lg-muted: #c4a977;
+  --lg-acc: #ff9d3c;
+  --lg-acc2: #f0c97c;
+  --lg-line: #8a6a3899;
+  --lg-field: #0f0a05;
+  --lg-btn-ink: #2a1604;
+  --lg-err: #ffb08a;
+  --lg-fh: "Cinzel", serif;
+  --lg-fb: "Cormorant Garamond", serif;
+  position: relative;
+  display: block;
+  width: min(380px, 100%);
+  padding: 34px 30px 28px;
+  background: #1a1009f2;
+  color: var(--lg-ink);
+  font-family: var(--lg-fb);
+  border: 1px solid var(--lg-line);
+  border-radius: 4px;
+  box-shadow: 0 0 0 1px #000, 0 18px 50px #000c;
+}
+.login-card::before {
+  content: "";
+  position: absolute;
+  inset: 6px;
+  border: 1px solid #8a6a3855;
+  pointer-events: none;
+}
+
+.login-card .login-card__crest {
+  width: 56px;
+  height: 74px;
+  margin: 0 auto 10px;
+  color: var(--lg-acc);
+  display: grid;
+  place-items: center;
+}
+.login-card .login-card__crest svg {
+  width: 34px;
+  height: 54px;
+}
+.login-card .login-card__title {
+  font: 700 1.7rem/1.1 var(--lg-fh);
+  margin: 0;
+  text-align: center;
+  letter-spacing: 0.04em;
+  color: var(--lg-ink);
+}
+.login-card .login-card__sub {
+  max-width: none;
+  text-align: center;
+  margin: 8px 0 22px;
+  color: var(--lg-muted);
+  font-size: 1.1rem;
+}
+
+.login-card .login-card__label {
+  display: block;
+  font: 600 0.95rem var(--lg-fb);
+  margin: 14px 0 5px;
+  color: var(--lg-ink);
+}
+.login-card .login-card__input {
+  display: block;
+  width: 100%;
+  min-height: 0;
+  font: 500 1.05rem var(--lg-fb);
+  padding: 11px 12px;
+  color: var(--lg-ink);
+  background: var(--lg-field);
+  border: 1px solid var(--lg-line);
+  border-radius: 3px;
+  transition: none;
+}
+.login-card .login-card__input::placeholder {
+  color: var(--lg-muted);
+  opacity: 0.7;
+}
+.login-card .login-card__input:hover {
+  border-color: var(--lg-line);
+}
+.login-card .login-card__input:focus-visible {
+  outline: 2px solid var(--lg-acc2);
+  outline-offset: 2px;
+  border-color: var(--lg-line);
+  box-shadow: none;
+}
+
+.login-card .login-card__error {
+  max-width: none;
+  margin: 8px 0 14px;
+  min-height: 1.2em;
+  color: var(--lg-err);
+  font-size: 0.92rem;
+}
+
+.login-card .login-card__btn {
+  display: block;
+  width: 100%;
+  min-height: 0;
+  padding: 13px;
+  font: 700 1.05rem var(--lg-fh);
+  letter-spacing: 0.06em;
+  color: var(--lg-btn-ink);
+  background: var(--lg-acc);
+  border: 0;
+  border-radius: 2px;
+  box-shadow: 0 0 18px #ff9d3c55;
+  cursor: pointer;
+}
+.login-card .login-card__btn:hover {
+  background: #ffb35f;
+  color: var(--lg-btn-ink);
+  border: 0;
+}
+.login-card .login-card__btn:active {
+  transform: translateY(1px);
+}
+.login-card .login-card__btn:focus-visible,
+.login-card .login-card__link:focus-visible {
+  outline: 2px solid var(--lg-acc2);
+  outline-offset: 2px;
+}
+
+.login-card .login-card__alt {
+  max-width: none;
+  text-align: center;
+  margin: 18px 0 0;
+  font-size: 1rem;
+  color: var(--lg-muted);
+}
+.login-card .login-card__link,
+.login-card .login-card__link:hover {
+  color: var(--lg-acc2);
+}
+
+/* Móvil en horizontal / pantallas bajas */
+@media (max-height: 520px) {
+  .login-card { width: min(520px, 100%); padding: 24px 26px 18px; }
+  .login-card .login-card__crest { display: none; }
+  .login-card .login-card__sub { margin: 6px 0 8px; }
+  .login-card .login-card__label { margin: 8px 0 3px; }
+  .login-card .login-card__input { padding: 8px 10px; }
+  .login-card .login-card__error { margin: 4px 0 8px; }
+  .login-card .login-card__btn { padding: 10px; }
+  .login-card .login-card__alt { margin: 10px 0 0; }
+}
