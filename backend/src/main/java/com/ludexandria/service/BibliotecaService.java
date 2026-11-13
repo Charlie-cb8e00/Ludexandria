@@ -5,15 +5,32 @@ import com.ludexandria.dao.JuegoDao;
 import com.ludexandria.dto.BibliotecaRequest;
 import com.ludexandria.exception.ApiException;
 import com.ludexandria.model.BibliotecaItem;
+import com.ludexandria.model.Juego;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class BibliotecaService {
     private final BibliotecaDao bibliotecaDao;
     private final JuegoDao juegoDao;
+    private static final List<String> JUEGOS_POPULARES = List.of(
+            "Minecraft",
+            "The Witcher 3: Wild Hunt",
+            "The Legend of Zelda: Breath of the Wild",
+            "Red Dead Redemption 2",
+            "Elden Ring",
+            "Stardew Valley",
+            "Hollow Knight",
+            "Hades",
+            "Celeste",
+            "God of War Ragnarök"
+    );
 
     public BibliotecaService(BibliotecaDao bibliotecaDao, JuegoDao juegoDao) {
         this.bibliotecaDao = bibliotecaDao;
@@ -22,6 +39,40 @@ public class BibliotecaService {
 
     public List<BibliotecaItem> listar(Long idUsuario, String estado) {
         return bibliotecaDao.findByUsuario(idUsuario, estado);
+    }
+
+    @Transactional
+    public Map<String, Integer> anadirPopulares(Long idUsuario) {
+        List<BibliotecaItem> bibliotecaActual = bibliotecaDao.findByUsuario(idUsuario, null);
+        var idsEnBiblioteca = bibliotecaActual.stream()
+                .map(BibliotecaItem::getIdJuego)
+                .collect(Collectors.toSet());
+        int anadidos = 0;
+        int yaExistentes = 0;
+
+        for (String nombre : JUEGOS_POPULARES) {
+            var juego = juegoDao.findByNombreExacto(nombre).orElseGet(() -> {
+                var nuevo = new Juego();
+                nuevo.setNombre(nombre);
+                nuevo.setUltimaActualizacion(Instant.now());
+                return juegoDao.insert(nuevo);
+            });
+
+            if (!idsEnBiblioteca.add(juego.getId())) {
+                yaExistentes++;
+                continue;
+            }
+
+            BibliotecaItem item = new BibliotecaItem();
+            item.setIdUsuario(idUsuario);
+            item.setIdJuego(juego.getId());
+            item.setEstado("pendiente");
+            item.setHorasJugadas(0.0);
+            bibliotecaDao.insert(item);
+            anadidos++;
+        }
+
+        return Map.of("anadidos", anadidos, "yaExistentes", yaExistentes);
     }
 
     public BibliotecaItem anadir(Long idUsuario, BibliotecaRequest req) {

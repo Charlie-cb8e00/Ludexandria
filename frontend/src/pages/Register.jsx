@@ -21,17 +21,12 @@ export default function Register() {
         }
 
         try {
-            // Cuando el backend esté listo:
-            // await api.post("/auth/registro", { email, password, nombre });
-            // const { data } = await api.post("/auth/login", { email, password });
-            // localStorage.setItem("token", data.token);
-
-            // Modo demo (sin backend):
-            localStorage.setItem("token", "demo-token");
+            const { data } = await api.post("/auth/registro", { email, password, nombre });
+            localStorage.setItem("token", data.token);
             setOk(true);
             setTimeout(() => navigate("/"), 800);
         } catch (err) {
-            setError(err.response?.data?.message || "Error al registrarse");
+            setError(err.response?.data?.message || "No se pudo crear la cuenta. Comprueba el backend y los datos.");
         }
     }
 
