@@ -4,6 +4,7 @@ import com.ludexandria.model.Juego;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Date;
 import java.sql.Timestamp;
@@ -72,14 +73,49 @@ public class JuegoDao {
         return j;
     }
 
+    @Transactional
+    public Juego saveOrUpdate(Juego incoming) {
+        Optional<Juego> cached = incoming.getIgdbId() == null
+                ? Optional.empty()
+                : findByIgdbId(incoming.getIgdbId());
+        if (cached.isEmpty()) {
+            cached = findByNombreExacto(incoming.getNombre());
+        }
+        if (cached.isEmpty()) {
+            return insert(incoming);
+        }
+
+        Juego juego = cached.get();
+        if (juego.getIgdbId() == null && incoming.getIgdbId() != null) {
+            juego.setIgdbId(incoming.getIgdbId());
+        }
+        if (incoming.getResumen() != null && !incoming.getResumen().isBlank()) {
+            juego.setResumen(incoming.getResumen());
+        }
+        if (incoming.getFechaSalida() != null) {
+            juego.setFechaSalida(incoming.getFechaSalida());
+        }
+        if (incoming.getNotaIgdb() != null) {
+            juego.setNotaIgdb(incoming.getNotaIgdb());
+        }
+        if (incoming.getUrlPortada() != null && !incoming.getUrlPortada().isBlank()
+                && (incoming.getIgdbId() != null || juego.getUrlPortada() == null
+                || juego.getUrlPortada().isBlank())) {
+            juego.setUrlPortada(incoming.getUrlPortada());
+        }
+        juego.setUltimaActualizacion(incoming.getUltimaActualizacion());
+        update(juego);
+        return juego;
+    }
+
     public void update(Juego j) {
         jdbc.update(
             """
-            UPDATE juego SET nombre=?, resumen=?, fecha_salida=?, nota_igdb=?,
+            UPDATE juego SET igdb_id=?, nombre=?, resumen=?, fecha_salida=?, nota_igdb=?,
               duracion_minutos=?, url_portada=?, ultima_actualizacion=?
             WHERE id=?
             """,
-            j.getNombre(), j.getResumen(), j.getFechaSalida(), j.getNotaIgdb(),
+            j.getIgdbId(), j.getNombre(), j.getResumen(), j.getFechaSalida(), j.getNotaIgdb(),
             j.getDuracionMinutos(), j.getUrlPortada(),
             j.getUltimaActualizacion() == null ? null : Timestamp.from(j.getUltimaActualizacion()),
             j.getId()

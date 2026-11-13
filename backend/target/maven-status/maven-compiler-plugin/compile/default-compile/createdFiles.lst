@@ -3,7 +3,9 @@ com\ludexandria\service\BibliotecaService.class
 com\ludexandria\controller\BibliotecaController.class
 com\ludexandria\dao\UsuarioDao.class
 com\ludexandria\dao\JuegoDao.class
+com\ludexandria\dto\JuegoSearchResponse.class
 com\ludexandria\dto\BibliotecaRequest.class
+com\ludexandria\service\ProviderSearchResult.class
 com\ludexandria\dto\AuthRequest.class
 com\ludexandria\service\IgdbService.class
 com\ludexandria\service\ImportacionService.class
@@ -23,6 +25,7 @@ com\ludexandria\model\BibliotecaItem.class
 com\ludexandria\model\Juego.class
 com\ludexandria\security\JwtService.class
 com\ludexandria\exception\ApiException.class
+com\ludexandria\service\SteamService.class
 com\ludexandria\dto\AuthResponse.class
 com\ludexandria\security\JwtAuthFilter.class
 com\ludexandria\dto\RecomendacionRequest.class

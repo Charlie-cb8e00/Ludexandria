@@ -6,7 +6,7 @@ Cumple el MVP del documento de planificación (Grupo G5):
 
 - Registro / login con JWT
 - CRUD de biblioteca personal (estado, nota, horas)
-- Búsqueda y ficha de juegos (caché local; preparado para IGDB)
+- Búsqueda bajo demanda en Steam e IGDB, con caché local de resultados
 - Importación de biblioteca desde CSV
 - Asistente de recomendaciones (basado en la biblioteca real; preparado para IA)
 - Panel de administración básico (roles, stats, consumo IA)
@@ -58,6 +58,8 @@ mvn spring-boot:run
 | POST | `/api/auth/registro` | No | Alta `{ email, password, nombre? }` |
 | POST | `/api/auth/login` | No | Login → `{ token, email, nombre, rol }` |
 | GET | `/api/juegos?q=&page=&size=` | Sí | Buscar juegos |
+| GET | `/api/juegos/buscar?q=&page=&size=` | Sí | Buscar juegos e informar avisos de fuentes; respuesta `{ juegos, advertencias }` |
+| GET | `/api/juegos/fuentes` | Sí | Estado de disponibilidad de Steam e IGDB |
 | GET | `/api/juegos/{id}` | Sí | Ficha |
 | POST | `/api/juegos/demo` | Sí | Crear juego de prueba |
 | GET | `/api/biblioteca?estado=` | Sí | Mi biblioteca |
@@ -84,6 +86,11 @@ Estados válidos: `pendiente`, `jugando`, `completado`, `abandonado`.
 
 La pantalla de biblioteca permite importar el CSV o añadir una selección de juegos
 populares. La carga de juegos populares es idempotente: no duplica entradas existentes.
+
+La búsqueda consulta Steam bajo demanda y consulta IGDB cuando están configuradas
+`IGDB_CLIENT_ID` e `IGDB_CLIENT_SECRET`. `/api/juegos/buscar` también devuelve avisos
+si una fuente externa no está disponible. Solo los resultados de la búsqueda se guardan
+en la caché local; no se descarga el catálogo completo de ningún proveedor.
 
 ## Estructura de capas
 

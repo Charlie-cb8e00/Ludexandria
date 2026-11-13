@@ -1,6 +1,8 @@
+C:\Users\alumno\Desktop\Ludexandria\backend\src\main\java\com\ludexandria\service\SteamService.java
 C:\Users\alumno\Desktop\Ludexandria\backend\src\main\java\com\ludexandria\dao\BibliotecaDao.java
 C:\Users\alumno\Desktop\Ludexandria\backend\src\main\java\com\ludexandria\service\AuthService.java
 C:\Users\alumno\Desktop\Ludexandria\backend\src\main\java\com\ludexandria\controller\JuegoController.java
+C:\Users\alumno\Desktop\Ludexandria\backend\src\main\java\com\ludexandria\service\ProviderSearchResult.java
 C:\Users\alumno\Desktop\Ludexandria\backend\src\main\java\com\ludexandria\service\RecomendacionService.java
 C:\Users\alumno\Desktop\Ludexandria\backend\src\main\java\com\ludexandria\controller\AuthController.java
 C:\Users\alumno\Desktop\Ludexandria\backend\src\main\java\com\ludexandria\model\Juego.java
@@ -19,6 +21,7 @@ C:\Users\alumno\Desktop\Ludexandria\backend\src\main\java\com\ludexandria\securi
 C:\Users\alumno\Desktop\Ludexandria\backend\src\main\java\com\ludexandria\controller\ImportacionController.java
 C:\Users\alumno\Desktop\Ludexandria\backend\src\main\java\com\ludexandria\exception\GlobalExceptionHandler.java
 C:\Users\alumno\Desktop\Ludexandria\backend\src\main\java\com\ludexandria\controller\AdminController.java
+C:\Users\alumno\Desktop\Ludexandria\backend\src\main\java\com\ludexandria\dto\JuegoSearchResponse.java
 C:\Users\alumno\Desktop\Ludexandria\backend\src\main\java\com\ludexandria\service\ImportacionService.java
 C:\Users\alumno\Desktop\Ludexandria\backend\src\main\java\com\ludexandria\dao\JuegoDao.java
 C:\Users\alumno\Desktop\Ludexandria\backend\src\main\java\com\ludexandria\dto\BibliotecaRequest.java
