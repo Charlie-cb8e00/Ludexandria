@@ -8,7 +8,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Optional;
 
 @Repository
@@ -56,9 +60,48 @@ public class JuegoDao {
         return list.stream().findFirst();
     }
 
+    public List<Juego> findByNombres(List<String> nombres) {
+        if (nombres.isEmpty()) return List.of();
+        String placeholders = String.join(",", Collections.nCopies(nombres.size(), "?"));
+        String sql = "SELECT * FROM juego WHERE LOWER(nombre) IN (" + placeholders + ") ORDER BY id";
+        Object[] nombresNormalizados = nombres.stream()
+                .map(nombre -> nombre.toLowerCase(Locale.ROOT))
+                .toArray();
+        return jdbc.query(sql, mapper, nombresNormalizados);
+    }
+
     public Optional<Juego> findByIgdbId(Long igdbId) {
         var list = jdbc.query("SELECT * FROM juego WHERE igdb_id = ?", mapper, igdbId);
         return list.stream().findFirst();
+    }
+
+    public List<Juego> insertAll(List<Juego> juegos) {
+        if (juegos.isEmpty()) return List.of();
+        String values = String.join(",", Collections.nCopies(juegos.size(), "(?,?,?,?,?,?,?,?)"));
+        String sql = "INSERT INTO juego (igdb_id, nombre, resumen, fecha_salida, nota_igdb, "
+                + "duracion_minutos, url_portada, ultima_actualizacion) VALUES " + values;
+        List<Object> parameters = new ArrayList<>(juegos.size() * 8);
+        for (Juego juego : juegos) {
+            parameters.add(juego.getIgdbId());
+            parameters.add(juego.getNombre());
+            parameters.add(juego.getResumen());
+            parameters.add(juego.getFechaSalida());
+            parameters.add(juego.getNotaIgdb());
+            parameters.add(juego.getDuracionMinutos());
+            parameters.add(juego.getUrlPortada());
+            parameters.add(juego.getUltimaActualizacion() == null
+                    ? null : Timestamp.from(juego.getUltimaActualizacion()));
+        }
+        jdbc.update(sql, parameters.toArray());
+        return findByNombres(juegos.stream().map(Juego::getNombre).toList());
+    }
+
+    public void updatePortadas(Map<Long, String> portadasPorJuego) {
+        if (portadasPorJuego.isEmpty()) return;
+        List<Object[]> parameters = portadasPorJuego.entrySet().stream()
+                .map(entry -> new Object[]{entry.getValue(), entry.getKey()})
+                .toList();
+        jdbc.batchUpdate("UPDATE juego SET url_portada=? WHERE id=?", parameters);
     }
 
     public Juego insert(Juego j) {

@@ -1,6 +1,7 @@
 com\ludexandria\controller\ImportacionController.class
 com\ludexandria\service\BibliotecaService.class
 com\ludexandria\controller\BibliotecaController.class
+com\ludexandria\service\BibliotecaService$JuegoPopular.class
 com\ludexandria\dao\UsuarioDao.class
 com\ludexandria\dao\JuegoDao.class
 com\ludexandria\dto\JuegoSearchResponse.class

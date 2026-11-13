@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import api, { getApiErrorMessage } from "../api/client";
 
-const PLACEHOLDER_COVER = "https://placehold.co/600x800?text=Sin+portada";
+const PLACEHOLDER_COVER = "/cover-placeholder.svg";
 const WIKIPEDIA_SOURCES = [
     { domain: "es.wikipedia.org", suffix: "_(videojuego)" },
     { domain: "en.wikipedia.org", suffix: "_(video_game)" },
@@ -78,6 +78,7 @@ export default function GameDetail() {
     const { id } = useParams();
     const [gameResult, setGameResult] = useState({ id: null, game: null, error: "" });
     const [wikiResult, setWikiResult] = useState({ id: null, article: null, error: "" });
+    const [libraryResult, setLibraryResult] = useState({ id: null, item: null, error: "" });
     const [failedImage, setFailedImage] = useState("");
 
     useEffect(() => {
@@ -119,6 +120,23 @@ export default function GameDetail() {
         return () => controller.abort();
     }, [gameId, gameName]);
 
+    useEffect(() => {
+        if (gameId == null) return undefined;
+        const controller = new AbortController();
+        api.get(`/biblioteca/juego/${gameId}`, { signal: controller.signal })
+            .then(({ data }) => setLibraryResult({ id: gameId, item: data || null, error: "" }))
+            .catch((error) => {
+                if (error.code !== "ERR_CANCELED") {
+                    setLibraryResult({
+                        id: gameId,
+                        item: null,
+                        error: getApiErrorMessage(error, "No se pudo consultar tu biblioteca."),
+                    });
+                }
+            });
+        return () => controller.abort();
+    }, [gameId]);
+
     if (gameLoading) return <p role="status">Cargando ficha…</p>;
 
     if (gameError || !game) {
@@ -132,10 +150,13 @@ export default function GameDetail() {
 
     const article = wikiResult.id === game.id ? wikiResult.article : null;
     const wikiLoading = wikiResult.id !== game.id;
-    const coverUrl = game.urlPortada || article?.image || "";
-    const imageFromWikipedia = !game.urlPortada && Boolean(article?.image);
+    const libraryItem = libraryResult.id === game.id ? libraryResult.item : null;
+    const libraryLoading = libraryResult.id !== game.id;
+    const libraryError = libraryResult.id === game.id ? libraryResult.error : "";
+    const coverCandidates = [game.urlPortada, article?.image].filter(Boolean);
     const description = article?.extract || game.resumen;
-    const imageSrc = coverUrl && failedImage !== coverUrl ? coverUrl : PLACEHOLDER_COVER;
+    const imageSrc = coverCandidates.find((source) => source !== failedImage) || PLACEHOLDER_COVER;
+    const imageFromWikipedia = Boolean(article?.image) && imageSrc === article.image;
 
     return (
         <section>
@@ -146,7 +167,8 @@ export default function GameDetail() {
                         key={game.id}
                         src={imageSrc}
                         alt={`Portada de ${game.nombre}`}
-                        onError={() => setFailedImage(coverUrl)}
+                        referrerPolicy="no-referrer"
+                        onError={() => setFailedImage(imageSrc)}
                     />
                     {article?.url && (
                         <a href={article.url} target="_blank" rel="noreferrer">
@@ -180,6 +202,31 @@ export default function GameDetail() {
                             <dd>{article ? "Datos complementados desde Wikipedia" : "Catálogo Ludexandria"}</dd>
                         </div>
                     </dl>
+
+                    <section className="game-detail__library" aria-labelledby="library-info-title">
+                        <h2 id="library-info-title">Mi biblioteca</h2>
+                        {libraryLoading && <p role="status">Consultando tu biblioteca…</p>}
+                        {libraryError && <p role="alert">{libraryError}</p>}
+                        {!libraryLoading && !libraryError && libraryItem && (
+                            <dl>
+                                <div>
+                                    <dt>Estado</dt>
+                                    <dd>{libraryItem.estado}</dd>
+                                </div>
+                                <div>
+                                    <dt>Nota personal</dt>
+                                    <dd>{libraryItem.notaPersonal ?? "Sin nota"}</dd>
+                                </div>
+                                <div>
+                                    <dt>Horas jugadas</dt>
+                                    <dd>{libraryItem.horasJugadas ?? 0}</dd>
+                                </div>
+                            </dl>
+                        )}
+                        {!libraryLoading && !libraryError && !libraryItem && (
+                            <p>Este juego todavía no está en tu biblioteca.</p>
+                        )}
+                    </section>
 
                     {wikiLoading && <p role="status">Buscando imagen e información en Wikipedia…</p>}
                     {wikiResult.id === game.id && wikiResult.error && (
