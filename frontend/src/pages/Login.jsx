@@ -1,15 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-<<<<<<< HEAD
-<<<<<<< HEAD
-import TorchBackground from "../components/TorchBackground";
-import "./Login.css";
-=======
 import api from "../api/client";
->>>>>>> parent of 34647ca (frontend)
-=======
-import api from "../api/client";
->>>>>>> parent of 34647ca (frontend)
 
 export default function Login() {
     const [email, setEmail] = useState("");
@@ -21,11 +12,15 @@ export default function Login() {
         e.preventDefault();
         setError("");
         try {
-            const { data } = await api.post("/auth/login", { email, password });
-            localStorage.setItem("token", data.token);
+            // Cuando el backend esté listo:
+            // const { data } = await api.post("/auth/login", { email, password });
+            // localStorage.setItem("token", data.token);
+
+            // Mientras tanto, acceso de prueba:
+            localStorage.setItem("token", "demo-token");
             navigate("/");
         } catch (err) {
-            setError(err.response?.data?.message || "No se pudo iniciar sesión. Comprueba el backend y tus credenciales.");
+            setError(err.response?.data?.message || "Error al iniciar sesión");
         }
     }
 
