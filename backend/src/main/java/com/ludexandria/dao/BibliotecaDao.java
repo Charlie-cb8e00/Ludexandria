@@ -110,6 +110,7 @@ public class BibliotecaDao {
 
     public void insertAll(List<BibliotecaItem> items) {
         if (items.isEmpty()) return;
+        // Añade las entradas juntas en lugar de ejecutar una consulta por juego.
         String values = String.join(",", Collections.nCopies(items.size(), "(?,?,?,?,?)"));
         String sql = "INSERT INTO biblioteca (id_usuario, id_juego, estado, nota_personal, "
                 + "horas_jugadas) VALUES " + values;

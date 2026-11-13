@@ -39,6 +39,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 );
                 SecurityContextHolder.getContext().setAuthentication(auth);
             } catch (Exception ignored) {
+                // Un token incorrecto no autentica; Spring rechazará después la ruta protegida.
                 SecurityContextHolder.clearContext();
             }
         }

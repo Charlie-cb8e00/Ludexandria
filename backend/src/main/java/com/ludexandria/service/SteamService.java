@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
+/** Busca juegos en Steam Store y guarda cada resultado en la caché local. */
 @Service
 public class SteamService {
     private static final Logger log = LoggerFactory.getLogger(SteamService.class);

@@ -15,6 +15,7 @@ export default function Library() {
     const [notice, setNotice] = useState("");
     const [error, setError] = useState("");
     const loading = loadedEstado !== estado;
+    // Mostrar pocas tarjetas al principio evita pedir todas las portadas a la vez.
     const visibleItems = items.slice(0, visibleCount);
 
     useEffect(() => {

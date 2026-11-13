@@ -32,6 +32,7 @@ public class JuegoService {
     public JuegoSearchResponse buscarCatalogo(String q, int page, int size) {
         int limit = Math.min(Math.max(size, 1), 50);
         int offset = Math.max(page, 0) * limit;
+        // Las páginas siguientes usan la caché local; las fuentes remotas solo se consultan al buscar.
         if (q == null || q.isBlank() || page > 0) {
             return new JuegoSearchResponse(juegoDao.search(q, limit, offset), List.of());
         }

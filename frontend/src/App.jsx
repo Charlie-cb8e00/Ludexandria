@@ -12,6 +12,7 @@ import Profile from "./pages/Profile";
 import Admin from "./pages/Admin";
 
 function PrivateRoute({ children }) {
+    // Las páginas privadas solo se muestran si existe un token de sesión.
     const token = localStorage.getItem("token");
     return token ? children : <Navigate to="/login" />;
 }

@@ -91,6 +91,7 @@ public class BibliotecaService {
 
     public List<BibliotecaItem> listar(Long idUsuario, String estado) {
         List<BibliotecaItem> items = bibliotecaDao.findByUsuario(idUsuario, estado);
+        // Completa portadas antiguas en una sola operación, sin consultar Steam al abrir la página.
         Map<String, String> portadasPorNombre = new LinkedHashMap<>();
         for (JuegoPopular popular : JUEGOS_POPULARES) {
             if (popular.urlPortada() != null) {
@@ -122,6 +123,7 @@ public class BibliotecaService {
                 .map(BibliotecaItem::getIdJuego)
                 .collect(java.util.stream.Collectors.toSet());
 
+        // Buscar y guardar en grupo evita hacer varias consultas por cada juego.
         List<String> nombres = JUEGOS_POPULARES.stream().map(JuegoPopular::nombre).toList();
         Map<String, Juego> juegosPorNombre = new LinkedHashMap<>();
         for (Juego juego : juegoDao.findByNombres(nombres)) {
@@ -192,7 +194,7 @@ public class BibliotecaService {
         BibliotecaItem b = bibliotecaDao.findByIdAndUsuario(id, idUsuario)
                 .orElseThrow(() -> new ApiException(HttpStatus.NOT_FOUND, "Entrada no encontrada"));
         if (req.getEstado() != null) b.setEstado(req.getEstado());
-        if (req.getNotaPersonal() != null) b.setNotaPersonal(req.getNotaPersonal());
+        if (req.isNotaPersonalPresente()) b.setNotaPersonal(req.getNotaPersonal());
         if (req.getHorasJugadas() != null) b.setHorasJugadas(req.getHorasJugadas());
         bibliotecaDao.update(b);
         return bibliotecaDao.findByIdAndUsuario(id, idUsuario).orElse(b);
