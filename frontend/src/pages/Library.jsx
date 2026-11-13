@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import api from "../api/client";
+import api, { getApiErrorMessage } from "../api/client";
 import GameCard from "../components/GameCard";
 
 const ESTADOS = ["pendiente", "jugando", "completado", "abandonado"];
@@ -37,7 +37,7 @@ export default function Library() {
                 setError("Los juegos se añadieron, pero no se pudo actualizar la biblioteca.");
             }
         } catch (requestError) {
-            setError(requestError.response?.data?.message || "No se pudieron añadir los juegos populares.");
+            setError(getApiErrorMessage(requestError, "No se pudieron añadir los juegos populares."));
         } finally {
             setAddingPopular(false);
         }

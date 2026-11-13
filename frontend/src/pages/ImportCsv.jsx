@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import api from "../api/client";
+import api, { getApiErrorMessage } from "../api/client";
 
 export default function ImportCsv() {
     const [file, setFile] = useState(null);
@@ -22,7 +22,7 @@ export default function ImportCsv() {
             const response = await api.post("/importaciones", formData);
             setResult(response.data);
         } catch (requestError) {
-            setError(requestError.response?.data?.message || "No se pudo importar el archivo.");
+            setError(getApiErrorMessage(requestError, "No se pudo importar el archivo."));
         } finally {
             setLoading(false);
         }

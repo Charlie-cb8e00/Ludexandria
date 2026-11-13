@@ -12,15 +12,11 @@ export default function Login() {
         e.preventDefault();
         setError("");
         try {
-            // Cuando el backend esté listo:
-            // const { data } = await api.post("/auth/login", { email, password });
-            // localStorage.setItem("token", data.token);
-
-            // Mientras tanto, acceso de prueba:
-            localStorage.setItem("token", "demo-token");
+            const { data } = await api.post("/auth/login", { email, password });
+            localStorage.setItem("token", data.token);
             navigate("/");
         } catch (err) {
-            setError(err.response?.data?.message || "Error al iniciar sesión");
+            setError(err.response?.data?.message || "No se pudo iniciar sesión. Comprueba el backend y tus credenciales.");
         }
     }
 
