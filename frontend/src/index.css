@@ -6,7 +6,7 @@
    Sustituye al index.css actual. App.css ya no se usa: se puede borrar.
    ========================================================================== */
  
-@import url("https://fonts.googleapis.com/css2?family=Peralta&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Peralta&family=Figtree:wght@400;500;600;700&display=swap");
  
 /* --------------------------------------------------------------------------
    1. Tokens
@@ -54,7 +54,7 @@
   --font-egyptian: "Peralta", Georgia, "Times New Roman", serif;
   --font-title: var(--font-egyptian);
   --font-section-title: "Mariana", "Mariana Slab Serif Bold", var(--font-egyptian);
-  --font-body: var(--font-egyptian);
+  --font-body: "Figtree", system-ui, "Segoe UI", Roboto, sans-serif;
  
   /* Escala (ratio ~1.25) */
   --fs-sm: 0.875rem;
@@ -201,7 +201,7 @@ h3 {
  
 h2,
 h3 {
-  font-family: var(--font-section-title);
+  font-family: var(--font-title);
 }
 
 h1 {
@@ -418,13 +418,17 @@ button:disabled,
   white-space: nowrap;
 }
  
-.navbar__brand {
+.navbar .navbar__brand {
   font-family: var(--font-title);
-  font-weight: 800;
+  font-weight: 700;
   font-size: var(--fs-lg);
-  color: var(--text);
-  text-decoration: none;
-  margin-right: auto;
+  color: var(--accent);
+  margin-right: var(--space-4);
+  padding-left: 0;
+}
+.navbar .navbar__brand:hover {
+  background: transparent;
+  color: var(--accent-strong);
 }
  
 .navbar a,
@@ -476,11 +480,12 @@ button:disabled,
 }
 .theme-selector__icon {
   display: block;
-  width: 26px;
-  height: 26px;
-  background-color: var(--text);
-  mask: var(--icon-mask) center / contain no-repeat;
-  -webkit-mask: var(--icon-mask) center / contain no-repeat;
+  width: 24px;
+  height: 24px;
+  color: var(--text);
+}
+.navbar__actions .theme-selector:hover .theme-selector__icon {
+  color: var(--accent);
 }
 .navbar__profile {
   display: inline-flex;
@@ -535,6 +540,10 @@ button:disabled,
   width: min(420px, 100% - 2rem);
   margin: var(--space-6) auto;
 }
+.auth-card > p:last-child {
+  margin-top: var(--space-4);
+  margin-bottom: 0;
+}
  
 /* Portada de inicio */
 .portada {
@@ -580,7 +589,7 @@ button:disabled,
   color: var(--text);
 }
 .tile strong {
-  font-family: var(--font-section-title);
+  font-family: var(--font-title);
   font-size: var(--fs-lg);
 }
 .tile span {
@@ -671,7 +680,7 @@ button:disabled,
 }
  
 .game-card__title {
-  font-family: var(--font-section-title);
+  font-family: var(--font-title);
   font-weight: 700;
   font-size: var(--fs-base);
   line-height: 1.25;

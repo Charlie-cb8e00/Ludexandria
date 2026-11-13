@@ -13,6 +13,7 @@ export default function Navbar() {
 
     return (
         <nav className="navbar">
+            <Link to="/" className="navbar__brand">Ludexandria</Link>
             {token && (
                 <>
                     <Link to="/">Inicio</Link>

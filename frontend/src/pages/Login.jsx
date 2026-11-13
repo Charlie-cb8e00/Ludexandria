@@ -21,10 +21,10 @@ export default function Login() {
     }
 
     return (
-        <div style={{ maxWidth: 400, margin: "3rem auto" }}>
+        <div className="panel auth-card">
             <h1>Iniciar sesión</h1>
             <p>Ludexandria – Tu biblioteca de videojuegos</p>
-            <form onSubmit={handleSubmit} style={{ display: "grid", gap: 12 }}>
+            <form onSubmit={handleSubmit}>
                 <label>
                     Email
                     <input
@@ -32,7 +32,6 @@ export default function Login() {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
-                        style={{ width: "100%", padding: 8 }}
                     />
                 </label>
                 <label>
@@ -42,13 +41,12 @@ export default function Login() {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
-                        style={{ width: "100%", padding: 8 }}
                     />
                 </label>
-                {error && <p style={{ color: "crimson" }}>{error}</p>}
+                {error && <p className="alert alert--error" role="alert">{error}</p>}
                 <button type="submit">Entrar</button>
             </form>
-            <p style={{ marginTop: 12 }}>
+            <p>
                 ¿No tienes cuenta? <Link to="/register">Regístrate</Link>
             </p>
         </div>

@@ -31,10 +31,10 @@ export default function Register() {
     }
 
     return (
-        <div style={{ maxWidth: 400, margin: "3rem auto" }}>
+        <div className="panel auth-card">
             <h1>Crear cuenta</h1>
             <p>Regístrate en Ludexandria</p>
-            <form onSubmit={handleSubmit} style={{ display: "grid", gap: 12 }}>
+            <form onSubmit={handleSubmit}>
                 <label>
                     Nombre
                     <input
@@ -42,7 +42,6 @@ export default function Register() {
                         value={nombre}
                         onChange={(e) => setNombre(e.target.value)}
                         required
-                        style={{ width: "100%", padding: 8 }}
                     />
                 </label>
                 <label>
@@ -52,7 +51,6 @@ export default function Register() {
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
                         required
-                        style={{ width: "100%", padding: 8 }}
                     />
                 </label>
                 <label>
@@ -63,14 +61,13 @@ export default function Register() {
                         onChange={(e) => setPassword(e.target.value)}
                         required
                         minLength={6}
-                        style={{ width: "100%", padding: 8 }}
                     />
                 </label>
-                {error && <p style={{ color: "crimson" }}>{error}</p>}
-                {ok && <p style={{ color: "green" }}>Cuenta creada. Redirigiendo…</p>}
+                {error && <p className="alert alert--error" role="alert">{error}</p>}
+                {ok && <p className="alert alert--success" role="status">Cuenta creada. Redirigiendo…</p>}
                 <button type="submit">Registrarme</button>
             </form>
-            <p style={{ marginTop: 12 }}>
+            <p>
                 ¿Ya tienes cuenta? <Link to="/login">Inicia sesión</Link>
             </p>
         </div>
