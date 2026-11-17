@@ -8,6 +8,7 @@ export default function Navbar() {
 
     function logout() {
         localStorage.removeItem("token");
+        localStorage.removeItem("user");
         navigate("/login");
     }
 
@@ -18,7 +19,7 @@ export default function Navbar() {
                 <NavLink end to="/">Inicio</NavLink>
                 <NavLink to="/buscar">Buscar</NavLink>
                 <NavLink to="/biblioteca">Biblioteca</NavLink>
-                <NavLink to="/asistente">Asistente IA</NavLink>
+                <NavLink to="/asistente">Recomendaciones</NavLink>
                 <NavLink to="/importar">Importar CSV</NavLink>
             </div>}
             <div className="navbar__actions">

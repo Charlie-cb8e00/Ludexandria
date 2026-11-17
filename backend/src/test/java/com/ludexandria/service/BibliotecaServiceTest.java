@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.*;
 
@@ -54,6 +55,29 @@ class BibliotecaServiceTest {
         String portada = "https://cdn.akamai.steamstatic.com/steam/apps/413150/library_600x900.jpg";
         assertEquals(portada, resultado.get(0).getJuego().getUrlPortada());
         verify(juegoDao).updatePortadas(Map.of(1L, portada));
+    }
+
+    @Test
+    void paginaLimitaElTamanoYDevuelveMetadatosDePaginacion() {
+        BibliotecaDao bibliotecaDao = mock(BibliotecaDao.class);
+        JuegoDao juegoDao = mock(JuegoDao.class);
+        BibliotecaService service = new BibliotecaService(bibliotecaDao, juegoDao);
+        BibliotecaItem item = new BibliotecaItem();
+        Juego juego = new Juego();
+        juego.setNombre("Juego de prueba");
+        item.setJuego(juego);
+        when(bibliotecaDao.findByUsuario(7L, "pendiente", 50, 50L)).thenReturn(List.of(item));
+        when(bibliotecaDao.countByUsuario(7L, "pendiente")).thenReturn(51L);
+
+        var response = service.pagina(7L, "pendiente", 1, 100);
+
+        assertEquals(List.of(item), response.content());
+        assertEquals(1, response.page());
+        assertEquals(50, response.size());
+        assertEquals(51, response.totalElements());
+        assertEquals(2, response.totalPages());
+        assertFalse(response.hasNext());
+        assertNull(item.getJuego().getUrlPortada());
     }
 
     @Test

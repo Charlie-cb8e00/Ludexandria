@@ -1,6 +1,7 @@
 package com.ludexandria.controller;
 
 import com.ludexandria.dto.BibliotecaRequest;
+import com.ludexandria.dto.PageResponse;
 import com.ludexandria.model.BibliotecaItem;
 import com.ludexandria.service.BibliotecaService;
 import jakarta.validation.Valid;
@@ -29,6 +30,15 @@ public class BibliotecaController {
             Authentication auth,
             @RequestParam(required = false) String estado) {
         return bibliotecaService.listar(uid(auth), estado);
+    }
+
+    @GetMapping("/pagina")
+    public PageResponse<BibliotecaItem> pagina(
+            Authentication auth,
+            @RequestParam(required = false) String estado,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "12") int size) {
+        return bibliotecaService.pagina(uid(auth), estado, page, size);
     }
 
     @GetMapping("/juego/{idJuego}")

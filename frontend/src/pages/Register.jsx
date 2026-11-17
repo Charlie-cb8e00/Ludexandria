@@ -22,7 +22,16 @@ export default function Register() {
 
         try {
             const { data } = await api.post("/auth/registro", { email, password, nombre });
+            if (typeof data?.token !== "string" || !data.token.trim()) {
+                setError("El servidor no devolvió una sesión válida.");
+                return;
+            }
             localStorage.setItem("token", data.token);
+            localStorage.setItem("user", JSON.stringify({
+                email: data.email,
+                nombre: data.nombre,
+                rol: data.rol,
+            }));
             setOk(true);
             setTimeout(() => navigate("/"), 800);
         } catch (err) {

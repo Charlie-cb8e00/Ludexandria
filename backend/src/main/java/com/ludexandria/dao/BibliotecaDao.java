@@ -48,28 +48,45 @@ public class BibliotecaDao {
     }
 
     public List<BibliotecaItem> findByUsuario(Long idUsuario, String estado) {
-        if (estado != null && !estado.isBlank()) {
-            return jdbc.query(
-                """
+        return findByUsuario(idUsuario, estado, null, 0);
+    }
+
+    public List<BibliotecaItem> findByUsuario(Long idUsuario, String estado, int limit, long offset) {
+        return findByUsuario(idUsuario, estado, Integer.valueOf(limit), offset);
+    }
+
+    private List<BibliotecaItem> findByUsuario(Long idUsuario, String estado, Integer limit, long offset) {
+        StringBuilder sql = new StringBuilder("""
                 SELECT b.*, j.id j_id, j.nombre j_nombre, j.resumen j_resumen,
                        j.url_portada j_portada, j.nota_igdb j_nota, j.duracion_minutos j_duracion
                 FROM biblioteca b JOIN juego j ON j.id = b.id_juego
-                WHERE b.id_usuario = ? AND b.estado = ?
-                ORDER BY b.fecha_anadido DESC
-                """,
-                mapper, idUsuario, estado
-            );
+                WHERE b.id_usuario = ?
+                """);
+        List<Object> parameters = new ArrayList<>();
+        parameters.add(idUsuario);
+        if (estado != null && !estado.isBlank()) {
+            sql.append(" AND b.estado = ?");
+            parameters.add(estado);
         }
-        return jdbc.query(
-            """
-            SELECT b.*, j.id j_id, j.nombre j_nombre, j.resumen j_resumen,
-                   j.url_portada j_portada, j.nota_igdb j_nota, j.duracion_minutos j_duracion
-            FROM biblioteca b JOIN juego j ON j.id = b.id_juego
-            WHERE b.id_usuario = ?
-            ORDER BY b.fecha_anadido DESC
-            """,
-            mapper, idUsuario
-        );
+        sql.append(" ORDER BY b.fecha_anadido DESC, b.id DESC");
+        if (limit != null) {
+            sql.append(" LIMIT ? OFFSET ?");
+            parameters.add(limit);
+            parameters.add(offset);
+        }
+        return jdbc.query(sql.toString(), mapper, parameters.toArray());
+    }
+
+    public long countByUsuario(Long idUsuario, String estado) {
+        if (estado != null && !estado.isBlank()) {
+            Long count = jdbc.queryForObject(
+                    "SELECT COUNT(*) FROM biblioteca WHERE id_usuario = ? AND estado = ?",
+                    Long.class, idUsuario, estado);
+            return count == null ? 0 : count;
+        }
+        Long count = jdbc.queryForObject(
+                "SELECT COUNT(*) FROM biblioteca WHERE id_usuario = ?", Long.class, idUsuario);
+        return count == null ? 0 : count;
     }
 
     public Optional<BibliotecaItem> findByIdAndUsuario(Long id, Long idUsuario) {

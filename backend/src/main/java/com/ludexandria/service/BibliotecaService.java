@@ -3,6 +3,7 @@ package com.ludexandria.service;
 import com.ludexandria.dao.BibliotecaDao;
 import com.ludexandria.dao.JuegoDao;
 import com.ludexandria.dto.BibliotecaRequest;
+import com.ludexandria.dto.PageResponse;
 import com.ludexandria.exception.ApiException;
 import com.ludexandria.model.BibliotecaItem;
 import com.ludexandria.model.Juego;
@@ -91,6 +92,20 @@ public class BibliotecaService {
 
     public List<BibliotecaItem> listar(Long idUsuario, String estado) {
         List<BibliotecaItem> items = bibliotecaDao.findByUsuario(idUsuario, estado);
+        completarPortadas(items);
+        return items;
+    }
+
+    public PageResponse<BibliotecaItem> pagina(Long idUsuario, String estado, int page, int size) {
+        int pagina = Math.max(page, 0);
+        int tamano = Math.min(Math.max(size, 1), 50);
+        List<BibliotecaItem> items = bibliotecaDao.findByUsuario(
+                idUsuario, estado, tamano, (long) pagina * tamano);
+        completarPortadas(items);
+        return PageResponse.of(items, pagina, tamano, bibliotecaDao.countByUsuario(idUsuario, estado));
+    }
+
+    private void completarPortadas(List<BibliotecaItem> items) {
         // Completa portadas antiguas en una sola operación, sin consultar Steam al abrir la página.
         Map<String, String> portadasPorNombre = new LinkedHashMap<>();
         for (JuegoPopular popular : JUEGOS_POPULARES) {
@@ -109,7 +124,6 @@ public class BibliotecaService {
             portadasActualizadas.put(juego.getId(), portada);
         }
         juegoDao.updatePortadas(portadasActualizadas);
-        return items;
     }
 
     public Optional<BibliotecaItem> buscarPorJuego(Long idUsuario, Long idJuego) {

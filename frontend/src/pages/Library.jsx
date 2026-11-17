@@ -8,40 +8,67 @@ const ITEMS_POR_CARGA = 12;
 
 export default function Library() {
     const [items, setItems] = useState([]);
-    const [visibleCount, setVisibleCount] = useState(ITEMS_POR_CARGA);
+    const [page, setPage] = useState(0);
+    const [hasNext, setHasNext] = useState(false);
     const [estado, setEstado] = useState("");
-    const [loadedEstado, setLoadedEstado] = useState(null);
+    const [refreshKey, setRefreshKey] = useState(0);
+    const [loading, setLoading] = useState(true);
     const [addingPopular, setAddingPopular] = useState(false);
     const [notice, setNotice] = useState("");
     const [error, setError] = useState("");
-    const loading = loadedEstado !== estado;
-    // Mostrar pocas tarjetas al principio evita pedir todas las portadas a la vez.
-    const visibleItems = items.slice(0, visibleCount);
 
     useEffect(() => {
+        let active = true;
         api
-            .get("/biblioteca", { params: estado ? { estado } : {} })
-            .then((res) => setItems(res.data))
-            .catch((requestError) => {
-                setError(getApiErrorMessage(requestError, "No se pudo cargar la biblioteca."));
+            .get("/biblioteca/pagina", {
+                params: { ...(estado ? { estado } : {}), page: 0, size: ITEMS_POR_CARGA },
             })
-            .finally(() => setLoadedEstado(estado));
-    }, [estado]);
+            .then(({ data }) => {
+                if (!active) return;
+                setItems(data.content);
+                setPage(data.page);
+                setHasNext(data.hasNext);
+            })
+            .catch((requestError) => {
+                if (active) setError(getApiErrorMessage(requestError, "No se pudo cargar la biblioteca."));
+            })
+            .finally(() => {
+                if (active) setLoading(false);
+            });
+        return () => {
+            active = false;
+        };
+    }, [estado, refreshKey]);
+
+    async function cargarMas() {
+        if (loading || !hasNext) return;
+        setLoading(true);
+        setError("");
+        try {
+            const { data } = await api.get("/biblioteca/pagina", {
+                params: { ...(estado ? { estado } : {}), page: page + 1, size: ITEMS_POR_CARGA },
+            });
+            setItems((current) => [...current, ...data.content]);
+            setPage(data.page);
+            setHasNext(data.hasNext);
+        } catch (requestError) {
+            setError(getApiErrorMessage(requestError, "No se pudieron cargar más juegos."));
+        } finally {
+            setLoading(false);
+        }
+    }
 
     async function anadirPopulares() {
         setAddingPopular(true);
+        setLoading(true);
         setNotice("");
         setError("");
         try {
             const response = await api.post("/biblioteca/populares");
             const { anadidos, yaExistentes } = response.data;
             setNotice(`Añadidos: ${anadidos}. Ya estaban en tu biblioteca: ${yaExistentes}.`);
-            try {
-                const result = await api.get("/biblioteca", { params: estado ? { estado } : {} });
-                setItems(result.data);
-            } catch {
-                setError("Los juegos se añadieron, pero no se pudo actualizar la biblioteca.");
-            }
+            setPage(0);
+            setRefreshKey((key) => key + 1);
         } catch (requestError) {
             setError(getApiErrorMessage(requestError, "No se pudieron añadir los juegos populares."));
         } finally {
@@ -49,11 +76,9 @@ export default function Library() {
         }
     }
 
-    if (loading) return <p>Cargando biblioteca…</p>;
-
     return (
-        <div>
-            <h1>Mi biblioteca</h1>
+        <section aria-labelledby="library-title">
+            <h1 id="library-title">Mi biblioteca</h1>
             <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                 <Link className="btn btn--ghost" to="/importar">Importar CSV</Link>
                 <button type="button" onClick={anadirPopulares} disabled={addingPopular}>
@@ -62,9 +87,13 @@ export default function Library() {
             </div>
             {notice && <p role="status">{notice}</p>}
             {error && <p role="alert">{error}</p>}
-            <select value={estado} onChange={(e) => {
+            <label htmlFor="library-status">Filtrar por estado</label>
+            <select id="library-status" value={estado} onChange={(e) => {
                 setEstado(e.target.value);
-                setVisibleCount(ITEMS_POR_CARGA);
+                setPage(0);
+                setItems([]);
+                setLoading(true);
+                setError("");
             }}>
                 <option value="">Todos</option>
                 {ESTADOS.map((e) => (
@@ -72,18 +101,24 @@ export default function Library() {
                 ))}
             </select>
 
-            <div style={{ display: "flex", flexWrap: "wrap", gap: 12, marginTop: 16 }}>
-                {visibleItems.map((item) => (
+            {loading && page === 0 && <p role="status">Cargando biblioteca…</p>}
+            <div style={{ display: "flex", flexWrap: "wrap", gap: 12, marginTop: 16 }} aria-busy={loading}>
+                {items.map((item) => (
                     <div key={item.id}>
                         <GameCard juego={item.juego} bibliotecaItem={item} />
                     </div>
                 ))}
             </div>
-            {visibleCount < items.length && (
-                <button type="button" onClick={() => setVisibleCount((count) => count + ITEMS_POR_CARGA)}>
-                    Mostrar más ({items.length - visibleCount} restantes)
+            {!loading && items.length === 0 && !error && <p role="status">No hay juegos en esta lista todavía.</p>}
+            {hasNext && (
+                <button
+                    type="button"
+                    onClick={cargarMas}
+                    disabled={loading}
+                >
+                    {loading ? "Cargando…" : "Mostrar más juegos"}
                 </button>
             )}
-        </div>
+        </section>
     );
 }

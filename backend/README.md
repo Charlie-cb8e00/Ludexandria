@@ -44,7 +44,9 @@ la app.
 - Steam se consulta al buscar y no necesita una clave.
 - IGDB es opcional; requiere `IGDB_CLIENT_ID` y `IGDB_CLIENT_SECRET` de una aplicación
   de Twitch.
-- Si una fuente falla, la búsqueda intenta mostrar resultados locales y avisos.
+- Las consultas externas tienen un máximo de 3 segundos para conectar y 8 para
+  recibir respuesta. Si una fuente falla o excede el tiempo, se muestran avisos y
+  se continúa con los resultados locales.
 - No se descargan catálogos completos.
 
 Las recomendaciones actuales seleccionan juegos pendientes de la biblioteca; no usan
@@ -81,6 +83,7 @@ Todas requieren iniciar sesión, salvo registro, acceso y documentación Swagger
 | `GET` | `/api/juegos/buscar?q=Hades` | Buscar juegos |
 | `GET` | `/api/juegos/{id}` | Ver ficha de un juego |
 | `GET` | `/api/biblioteca` | Ver mi biblioteca |
+| `GET` | `/api/biblioteca/pagina?page=0&size=12` | Cargar una página de la biblioteca |
 | `GET` | `/api/biblioteca/juego/{idJuego}` | Ver mi estado y nota de un juego |
 | `POST` | `/api/biblioteca` | Añadir un juego |
 | `POST` | `/api/biblioteca/populares` | Añadir la selección de 50 juegos |
@@ -90,6 +93,9 @@ Todas requieren iniciar sesión, salvo registro, acceso y documentación Swagger
 | `POST` | `/api/recomendaciones` | Elegir juegos pendientes según el tiempo |
 
 La consulta de biblioteca por juego responde `204` si el usuario aún no lo ha añadido.
+La búsqueda de juegos acepta `page` y `size` (máximo 50) y devuelve `juegos`,
+`advertencias` y metadatos de paginación. `/api/biblioteca/pagina` devuelve
+`content` y los mismos metadatos; ambas rutas empiezan en la página `0`.
 Las direcciones `/api/admin/...` requieren el rol de administrador.
 Las rutas de administración permiten listar usuarios, cambiar roles y consultar
 estadísticas de uso.
@@ -112,8 +118,9 @@ Estados permitidos: `pendiente`, `jugando`, `completado` y `abandonado`.
 mvn test
 ```
 
-Si usas Java 27 y aparece un error de Byte Buddy, usa:
+La configuración de pruebas activa el modo experimental de Byte Buddy para que
+también puedan ejecutarse en Java 27:
 
 ```powershell
-mvn test "-Dnet.bytebuddy.experimental=true"
+mvn test
 ```

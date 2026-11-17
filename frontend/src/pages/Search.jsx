@@ -7,6 +7,8 @@ export default function Search() {
     const [results, setResults] = useState([]);
     const [warnings, setWarnings] = useState([]);
     const [searchedQuery, setSearchedQuery] = useState("");
+    const [page, setPage] = useState(0);
+    const [hasNext, setHasNext] = useState(false);
     const [sources, setSources] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState("");
@@ -33,15 +35,35 @@ export default function Search() {
         setLoading(true);
         setError("");
         setWarnings([]);
+        setResults([]);
+        setHasNext(false);
         setSearchedQuery(termino);
         try {
             const { data } = await api.get("/juegos/buscar", { params: { q: termino, page: 0, size: 20 } });
             setResults(data.juegos);
             setWarnings(data.advertencias);
+            setPage(data.page);
+            setHasNext(data.hasNext);
         } catch (requestError) {
             setError(getApiErrorMessage(requestError, "No se pudieron buscar juegos."));
-            setResults([]);
-            setWarnings([]);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    async function cargarMas() {
+        if (!searchedQuery || loading || !hasNext) return;
+        setLoading(true);
+        setError("");
+        try {
+            const { data } = await api.get("/juegos/buscar", {
+                params: { q: searchedQuery, page: page + 1, size: 20 },
+            });
+            setResults((current) => [...current, ...data.juegos]);
+            setPage(data.page);
+            setHasNext(data.hasNext);
+        } catch (requestError) {
+            setError(getApiErrorMessage(requestError, "No se pudieron cargar más resultados."));
         } finally {
             setLoading(false);
         }
@@ -77,13 +99,20 @@ export default function Search() {
             {error && <p role="alert">{error}</p>}
             {warnings.map((warning) => <p role="alert" key={warning}>{warning}</p>)}
             {loading && <p role="status">Consultando los catálogos…</p>}
-            {!loading && searchedQuery && results.length === 0 && (
+            {!loading && !error && searchedQuery && results.length === 0 && (
                 <p role="status">No se encontraron juegos para «{searchedQuery}».</p>
             )}
             {results.length > 0 && (
-                <div className="game-grid" aria-label="Resultados de búsqueda">
-                    {results.map((juego) => <GameCard key={juego.id} juego={juego} />)}
-                </div>
+                <>
+                    <div className="game-grid" aria-label="Resultados de búsqueda" aria-busy={loading}>
+                        {results.map((juego) => <GameCard key={juego.id} juego={juego} />)}
+                    </div>
+                    {hasNext && (
+                        <button type="button" onClick={cargarMas} disabled={loading}>
+                            {loading ? "Cargando…" : "Mostrar más resultados"}
+                        </button>
+                    )}
+                </>
             )}
         </section>
     );

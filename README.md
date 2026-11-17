@@ -69,6 +69,6 @@ Cada parte tiene una guía propia: [frontend](./frontend/README.md) y
 
 ## Comprobar cambios
 
-Desde `backend`, ejecuta `mvn test`. Desde `frontend`, ejecuta `npm run lint` y
-`npm run build`. Si usas Java 27 y Maven da un error de Byte Buddy, ejecuta
-`mvn test "-Dnet.bytebuddy.experimental=true"`.
+Desde `backend`, ejecuta `mvn test`. Desde `frontend`, ejecuta `npm test`,
+`npm run lint` y `npm run build`. Puedes definir `VITE_API_BASE_URL` para apuntar
+el frontend a una API desplegada.

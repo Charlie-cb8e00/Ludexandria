@@ -8,7 +8,7 @@ export default function Home() {
                     <h1>Ludexandria</h1>
                     <p className="portada__descripcion">
                         Tu biblioteca personal de videojuegos. Organiza el backlog, guarda estado,
-                        nota y horas, e elige a qué jugar con ayuda de la IA.
+                        nota y horas, y decide a qué jugar.
                     </p>
                 </div>
             </section>
@@ -25,7 +25,7 @@ export default function Home() {
                 </Link>
 
                 <Link to="/asistente" className="tile">
-                    <strong>Asistente IA</strong>
+                    <strong>Asistente de recomendaciones</strong>
                     <span>¿A qué juego hoy según tiempo y ánimo?</span>
                 </Link>
 

@@ -42,12 +42,18 @@ public class JuegoDao {
         this.jdbc = jdbc;
     }
 
-    public List<Juego> search(String texto, int limit, int offset) {
+    public List<Juego> search(String texto, int limit, long offset) {
         String q = "%" + (texto == null ? "" : texto.trim()) + "%";
         return jdbc.query(
-            "SELECT * FROM juego WHERE nombre LIKE ? ORDER BY nombre LIMIT ? OFFSET ?",
+            "SELECT * FROM juego WHERE nombre LIKE ? ORDER BY nombre, id LIMIT ? OFFSET ?",
             mapper, q, limit, offset
         );
+    }
+
+    public long countSearch(String texto) {
+        String q = "%" + (texto == null ? "" : texto.trim()) + "%";
+        Long count = jdbc.queryForObject("SELECT COUNT(*) FROM juego WHERE nombre LIKE ?", Long.class, q);
+        return count == null ? 0 : count;
     }
 
     public Optional<Juego> findById(Long id) {

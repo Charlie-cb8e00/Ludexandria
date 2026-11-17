@@ -19,6 +19,7 @@ com\ludexandria\controller\RecomendacionController.class
 com\ludexandria\service\JuegoService.class
 com\ludexandria\controller\AuthController.class
 com\ludexandria\controller\JuegoController.class
+com\ludexandria\dto\PageResponse.class
 com\ludexandria\exception\GlobalExceptionHandler.class
 com\ludexandria\model\Usuario.class
 com\ludexandria\controller\AdminController.class

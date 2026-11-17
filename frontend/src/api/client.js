@@ -1,7 +1,9 @@
 import axios from "axios";
 
+const baseURL = import.meta.env.VITE_API_BASE_URL?.trim() || "http://localhost:8080/api";
+
 const api = axios.create({
-  baseURL: "http://localhost:8080/api", // Spring Boot
+  baseURL,
 });
 
 // Añade el JWT en cada petición
@@ -15,8 +17,10 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     const url = error.config?.url || "";
-    if (error.response?.status === 403 && !url.startsWith("/admin")) {
+    const isAuthRequest = url.startsWith("/auth/login") || url.startsWith("/auth/registro");
+    if ([401, 403].includes(error.response?.status) && !isAuthRequest && !url.startsWith("/admin")) {
       localStorage.removeItem("token");
+      localStorage.removeItem("user");
       window.location.assign("/login");
     }
     return Promise.reject(error);

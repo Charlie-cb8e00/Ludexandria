@@ -20,6 +20,7 @@ Abre <http://localhost:5173>. El backend debe estar activo en
 | Comando | Para qué sirve |
 |---|---|
 | `npm run dev` | Inicia la app para trabajar en local |
+| `npm test` | Ejecuta pruebas automatizadas de interfaz |
 | `npm run lint` | Busca errores de estilo y problemas comunes |
 | `npm run build` | Prepara los archivos para publicar |
 | `npm run preview` | Muestra la versión preparada para publicar |
@@ -33,10 +34,18 @@ Abre <http://localhost:5173>. El backend debe estar activo en
 - `src/index.css` y `src/App.css`: estilos.
 - `public`: imágenes y archivos servidos tal cual.
 
+Para apuntar a otro backend, define `VITE_API_BASE_URL` antes de compilar; por
+ejemplo, `https://api.ejemplo.com/api`. Si no se define, se usa
+`http://localhost:8080/api`. Puedes copiar `.env.example` como `.env.local` para
+configurar la dirección en desarrollo.
+
 Para entender una petición, busca la pantalla que la inicia y sigue la llamada a
 `api.get`, `api.post` o `api.put`. El cliente añade el token automáticamente.
 La dirección de la API está al principio de `src/api/client.js`; por defecto es
 `http://localhost:8080/api`.
+
+Para comprobar la interfaz, ejecuta `npm test`; `npm run lint` revisa el código y
+`npm run build` prepara los archivos para publicar.
 
 ## Pantallas
 
@@ -58,21 +67,14 @@ Wikipedia para completar la información. No se descargan catálogos completos.
 - El asistente actual no usa un modelo de IA: recomienda hasta cinco juegos
   pendientes según el tiempo y la duración conocida. El ánimo y la plataforma que
   se escriben solo aparecen en el motivo; todavía no cambian la selección.
-- No hay pruebas automatizadas propias del frontend. Por ahora se puede comprobar
-  el código con `npm run lint` y crear una compilación con `npm run build`.
 
 ### Optimizaciones que podemos abordar después
 
-1. Añadir pruebas de interfaz para iniciar sesión, importar CSV, guardar juegos y
-   mostrar errores de carga o de imágenes.
-2. Incorporar paginación en el servidor para bibliotecas y búsquedas grandes, y
-   cargar más resultados solo cuando la persona los solicite.
-3. Medir las consultas lentas y añadir índices en la base de datos solo donde las
+1. Ampliar las pruebas de interfaz para verificar errores de carga y reemplazo de
+   portadas que no estén disponibles.
+2. Medir las consultas lentas y añadir índices en la base de datos solo donde las
    mediciones demuestren que hacen falta.
-4. Mejorar la accesibilidad con navegación por teclado, etiquetas claras y
-   comprobaciones de contraste.
-5. Añadir límites y mensajes claros cuando un proveedor externo tarde demasiado
-   o no esté disponible.
+3. Completar la revisión de accesibilidad y comprobar el contraste de colores.
 
 ### Plan para integrar Gemini
 
