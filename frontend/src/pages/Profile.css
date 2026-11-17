@@ -1,0 +1,69 @@
+.profile-page {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.profile-page .page-header {
+  margin-bottom: 0;
+}
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: var(--space-4);
+}
+
+.profile-section h2 {
+  margin-bottom: var(--space-2);
+}
+
+.profile-section__description {
+  margin-bottom: var(--space-3);
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
+}
+
+.profile-fields {
+  display: grid;
+  margin: 0;
+}
+
+.profile-field {
+  display: grid;
+  grid-template-columns: minmax(120px, 0.8fr) minmax(0, 1.2fr);
+  gap: var(--space-3);
+  padding: var(--space-3) 0;
+  border-top: 1px solid var(--line);
+}
+
+.profile-field dt {
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
+}
+
+.profile-field dd {
+  margin: 0;
+  color: var(--text);
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.profile-page__notice {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: var(--fs-sm);
+}
+
+@media (max-width: 760px) {
+  .profile-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 420px) {
+  .profile-field {
+    grid-template-columns: 1fr;
+    gap: var(--space-1);
+  }
+}
